@@ -41,3 +41,13 @@ jobs:
 
       - name: Run tests with coverage
         run: XDEBUG_MODE=coverage php -d memory_limit=-1 ./bin/phpunit
+
+      # The committed openapi.yaml is generated from the `#[OA\...]` attributes in
+      # src/. Regenerate it and fail if it differs from what is committed, so an
+      # attribute change without a matching regenerate breaks CI. (The contract
+      # tests that validate the real PSR-7 responses against this spec run inside
+      # the PHPUnit gate above.)
+      - name: Check OpenAPI spec is in sync with the attributes
+        run: |
+          composer openapi:generate
+          git diff --exit-code openapi.yaml

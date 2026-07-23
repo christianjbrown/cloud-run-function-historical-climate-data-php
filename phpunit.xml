@@ -9,6 +9,10 @@
     <include>
       <directory>src</directory>
     </include>
+    <exclude>
+      <!-- Inert swagger-php spec-holder: only `#[OA\...]` attributes, no executable code. -->
+      <file>src/OpenApi.php</file>
+    </exclude>
   </source>
   <coverage includeUncoveredFiles="true" pathCoverage="true">
     <report>
