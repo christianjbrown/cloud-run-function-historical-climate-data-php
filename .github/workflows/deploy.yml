@@ -40,7 +40,7 @@ jobs:
           service_timeout: '60s'
           ingress_settings: 'ALLOW_ALL'
           build_environment_variables: 'COMPOSER_AUTH=${{ secrets.COMPOSER_AUTH }}'
-          environment_variables: 'USE_CACHE_TTL=3600,USE_CACHE_BUT_REQUEST_TTL=3600,USE_CACHE_IF_ERROR_TTL=3600,REQUIRED_HEADER_KEY=X-Request-Auth,REQUIRED_ORIGIN=${{ vars.REQUIRED_ORIGIN }},ALLOW_LOCAL_ORIGINS=true'
+          environment_variables: 'USE_CACHE_TTL=3600,USE_CACHE_BUT_REQUEST_TTL=3600,USE_CACHE_IF_ERROR_TTL=3600,REQUIRED_HEADER_KEY=X-Request-Auth,REQUIRED_ORIGIN=${{ vars.REQUIRED_ORIGIN }},ALLOW_LOCAL_ORIGINS=true,SURROGATE_KEY=${{ vars.GCP_CLOUD_FUNCTION_ENDPOINT }}'
           secrets: |-
             CHRISTIANBROWN_DATABASE_DSN=projects/${{ vars.GCP_PROJECT_ID }}/secrets/CHRISTIANBROWN_DATABASE_DSN/versions/latest
             REQUIRED_HEADER_VALUE=projects/${{ vars.GCP_PROJECT_ID }}/secrets/FASTLY_REQUIRED_HEADER_VALUE/versions/latest
@@ -69,10 +69,15 @@ jobs:
         run: 'curl "${{ steps.deploy.outputs.url }}/daily-month"'
 
       # Bust the Fastly edge cache so the new revision is served immediately.
-      # Uses FASTLY_PURGE_API_KEY — a purge-only token.
+      # Surrogate-key purge: the function emits `Surrogate-Key: <endpoint>` on
+      # every cached response, so purging that key invalidates ALL of this
+      # function's cached objects — including every /{route} subpath — in one
+      # call. (The former exact-URL purge only hit the bare path, never the
+      # cached subpaths.) The key matches the SURROGATE_KEY env var above.
+      # Uses FASTLY_PURGE_API_KEY — a purge-only token (needs purge_select).
       - name: 'Purge Fastly cache'
         run: |
           curl --fail-with-body --silent --show-error -X POST \
             -H "Fastly-Key: ${{ secrets.FASTLY_PURGE_API_KEY }}" \
             -H "Accept: application/json" \
-            "https://api.fastly.com/purge/${{ vars.FASTLY_CDN_HOST }}/${{ vars.GCP_CLOUD_FUNCTION_ENDPOINT }}"
+            "https://api.fastly.com/service/${{ vars.FASTLY_SERVICE_ID }}/purge/${{ vars.GCP_CLOUD_FUNCTION_ENDPOINT }}"
