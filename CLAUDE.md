@@ -70,10 +70,11 @@ excluded from coverage/PHPStan/phpcs) is the composition root.
 - **Constants live on the interface**, not the class (env keys, error messages, the month constants).
 - **No constructor property promotion**; typed `private` properties assigned in the constructor body;
   class members ordered **alphabetically**.
-- **A method that does not use `$this` must be `static`** (and called via `self::`) — a stateless helper
-  is static. The exception is a method that *must* stay instance to implement an interface or override a
-  parent (e.g. `OutputTransformer::transform()`). php-cs-fixer already enforces the equivalent for
-  closures (`static fn`).
+- **A method that does not use `$this` must be `static`** (called via `self::`) — a stateless helper is
+  static. Enforced for private methods by the shared `RequireStaticPrivateMethodRule` PHPStan rule (via
+  `php-code-quality-scripts`' `config/phpstan.neon`); interface/override methods stay instance (e.g.
+  `OutputTransformer::transform()`). php-cs-fixer already enforces the equivalent for closures
+  (`static fn`).
 - Import functions explicitly (`use function sprintf;`) and call them unqualified.
 - **Value objects** (`Config`, `Query`): required fields are constructor args; getters `getX()`.
 - **Array boundaries** carry `@param`/`@return` docblocks. Because php-cs-fixer strips a `@param` that

@@ -24,7 +24,7 @@ final class ConfigTransformer implements ConfigTransformerInterface
      */
     public function transform(array $env): ConfigInterface
     {
-        $databaseDsn = $this->extractRequiredString($env, self::ENV_DATABASE_DSN);
+        $databaseDsn = self::extractRequiredString($env, self::ENV_DATABASE_DSN);
 
         $requestConfig = $this->functionConfigTransformer->transform($env);
 
@@ -34,7 +34,7 @@ final class ConfigTransformer implements ConfigTransformerInterface
     /**
      * @param mixed[] $env
      */
-    private function extractRequiredString(array $env, string $key): string
+    private static function extractRequiredString(array $env, string $key): string
     {
         // Split into sequential guards (rather than a single `||`) so each
         // failure path is independently reachable for path coverage.
