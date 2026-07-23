@@ -1,0 +1,15 @@
+*.DS_Store
+*.iml
+.DS_Store
+.claude/settings.local.json
+.idea
+.idea/
+.local.env
+.phpunit.cache
+.phpunit.cache/
+bin
+bin/
+vendor
+vendor/
+.phpstan.cache
+.phpstan.cache/

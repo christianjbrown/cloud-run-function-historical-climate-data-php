@@ -1,0 +1,78 @@
+name: Deploy
+
+on:
+  push:
+    branches: ['main']
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - '.gitignore'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: 'Deploy Cloud Function'
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v5'
+
+      - name: 'Authenticate with GCP'
+        uses: 'google-github-actions/auth@v3'
+        with:
+          workload_identity_provider: 'projects/${{ vars.GCP_PROJECT_ID }}/locations/global/workloadIdentityPools/${{ vars.GCP_WIF_POOL }}/providers/${{ vars.GCP_WIF_PROVIDER }}'
+          service_account: '${{ vars.GCP_SERVICE_ACCOUNT }}'
+
+      - name: 'Create or update Cloud Function'
+        id: 'deploy'
+        uses: 'google-github-actions/deploy-cloud-functions@v4'
+        with:
+          name: 'get-historical-climate-data'
+          runtime: 'php85'
+          entry_point: 'run'
+          region: 'europe-west2'
+          memory: '256Mi'
+          min_instance_count: 0
+          max_instance_count: 1
+          service_timeout: '60s'
+          ingress_settings: 'ALLOW_ALL'
+          build_environment_variables: 'COMPOSER_AUTH=${{ secrets.COMPOSER_AUTH }}'
+          environment_variables: 'USE_CACHE_TTL=300,USE_CACHE_BUT_REQUEST_TTL=600,USE_CACHE_IF_ERROR_TTL=3600,REQUIRED_HEADER_KEY=X-Request-Auth,REQUIRED_ORIGIN=${{ vars.REQUIRED_ORIGIN }},ALLOW_LOCAL_ORIGINS=true'
+          secrets: |-
+            CHRISTIANBROWN_DATABASE_DSN=projects/${{ vars.GCP_PROJECT_ID }}/secrets/CHRISTIANBROWN_DATABASE_DSN/versions/latest
+            REQUIRED_HEADER_VALUE=projects/${{ vars.GCP_PROJECT_ID }}/secrets/FASTLY_REQUIRED_HEADER_VALUE/versions/latest
+
+      # Gen2 functions are backed by Cloud Run and are NOT public by default; on
+      # Gen2 public reachability is an IAM binding on the underlying Cloud Run
+      # service. Requires the deploy service account to have `roles/run.admin`.
+      - name: 'Allow unauthenticated invocations'
+        run: |
+          gcloud run services add-iam-policy-binding "get-historical-climate-data" \
+            --region='europe-west2' \
+            --member='allUsers' \
+            --role='roles/run.invoker'
+
+      # Attach the shared Cloud SQL instance (in the separate shared-data-services
+      # project) to this Gen2/Cloud Run service so the climate-history tables are
+      # reachable over the /cloudsql unix socket named in CHRISTIANBROWN_DATABASE_DSN.
+      # The runtime service account needs roles/cloudsql.client on that project.
+      - name: 'Connect Cloud SQL instance'
+        run: |
+          gcloud run services update "get-historical-climate-data" \
+            --region='europe-west2' \
+            --set-cloudsql-instances="${{ vars.GCP_CLOUD_SQL_INSTANCE }}"
+
+      - name: 'Test Cloud Function'
+        run: 'curl "${{ steps.deploy.outputs.url }}/daily-month"'
+
+      # Bust the Fastly edge cache so the new revision is served immediately.
+      # Uses FASTLY_PURGE_API_KEY — a purge-only token.
+      - name: 'Purge Fastly cache'
+        run: |
+          curl --fail-with-body --silent --show-error -X POST \
+            -H "Fastly-Key: ${{ secrets.FASTLY_PURGE_API_KEY }}" \
+            -H "Accept: application/json" \
+            "https://api.fastly.com/purge/${{ vars.FASTLY_CDN_HOST }}/${{ vars.GCP_CLOUD_FUNCTION_ENDPOINT }}"
