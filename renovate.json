@@ -1,0 +1,25 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "description": [
+    "The committed composer.lock pins the private dev-main christianjbrown/* sibling packages to a specific commit. They carry no version, so ordinary dependency updates never bump them and the deploy silently drifts behind the libraries.",
+    "Weekly lockFileMaintenance refreshes the whole lock — pulling every dev-main sibling to its latest main commit — and opens a PR whose CI reinstalls and runs the suite before it is merged (a merge redeploys the function).",
+    "Renovate must be installed on this account WITH read access to the private christianjbrown/* repositories, otherwise the lock refresh cannot resolve them.",
+    "Auto-merge: a PR is merged automatically via GitHub's native auto-merge (platformAutomerge) once the required `build` check passes — no manual triage. MAJOR updates are excluded and stay manual, because a major bump (symfony/doctrine/guzzle etc.) warrants a manual spike, as does anything that could break the live function."
+  ],
+  "dependencyDashboard": true,
+  "automerge": true,
+  "platformAutomerge": true,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on monday"],
+    "automerge": true
+  },
+  "packageRules": [
+    {
+      "description": "Keep major updates manual — they need review/a spike before touching the deployed function.",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    }
+  ]
+}

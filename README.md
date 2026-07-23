@@ -1,13 +1,80 @@
-# get-historical-climate-data
+# Historical Climate Data Google Cloud Run Function
 
-A PHP 8.5+ Google Cloud Run function that returns historical **min/max temperature and humidity**,
-inside (from SmartThings) and outside (from the Met Office), aggregated per day or per hour over a
-lookback window.
+[![CI](https://github.com/christianjbrown/php-gcp-function-historical-climate-data/actions/workflows/ci.yml/badge.svg)](https://github.com/christianjbrown/php-gcp-function-historical-climate-data/actions/workflows/ci.yml)
 
-## Endpoint
+A small [Google Cloud Run function](https://cloud.google.com/run) (PHP) that returns historical **min/max temperature and humidity** — inside (from [SmartThings](https://www.smartthings.com/)) and outside (from the [Met Office](https://datahub.metoffice.gov.uk/)) — aggregated per day or per hour over a lookback window, as a single JSON payload.
 
-`GET /{route}`, where `{route}` is one of a curated whitelist (hourly is capped at a day/month — longer
-hourly windows would return too many buckets):
+The route you request picks a resolution and window (e.g. `/daily-3-month` for the last three months by day). For that window it runs one grouped `MIN`/`MAX` query per source table over the shared climate-history database, buckets the readings into **UTC** days (or hours), merges the inside and outside sides into one row per bucket, and returns them ordered earliest first. The heavy lifting — the aggregation SQL — lives in the shared `christianjbrown/php-christianbrown-database-orm` package's `ClimateHistoryReader`; this function parses the path, drives the reader against both tables, and merges the results.
+
+
+
+## :heavy_check_mark: Prerequisites
+
+- [Git](https://git-scm.com/)
+- [PHP](https://www.php.net/) 8.5 or higher (8.x)
+- [Composer](https://getcomposer.org/)
+- A MySQL database reachable by the function, holding the shared climate-history tables (`smartthings_climate` and `met_office_weather`) that the sibling functions append to
+- Read access to the private `christianjbrown/*` package repositories this function depends on (Composer needs a GitHub token — see [CI & deployment](#rocket-ci--deployment))
+
+:bulb: If you're on macOS and have [Homebrew](https://brew.sh/), PHP and Composer will install with `brew install composer`.
+
+
+
+## :building_construction: Installation
+
+```bash
+git clone git@github.com:christianjbrown/php-gcp-function-historical-climate-data.git
+cd php-gcp-function-historical-climate-data
+composer install
+```
+
+
+
+## :gear: Configuration
+
+Configuration is read entirely from environment variables.
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `CHRISTIANBROWN_DATABASE_DSN` | ✅ | Doctrine DSN for the MySQL database holding the shared climate-history tables. |
+| `K_REVISION` | ✅ | Set automatically by the Cloud Run runtime; only needs setting yourself when running locally. |
+| `REQUIRED_HEADER_KEY` | — | If set (with `REQUIRED_HEADER_VALUE`), requests must send this header to be served. |
+| `REQUIRED_HEADER_VALUE` | — | Expected value for `REQUIRED_HEADER_KEY`. |
+| `REQUIRED_ORIGIN` | — | Restricts responses to this CORS origin. |
+| `USE_CACHE_TTL` | — | Seconds a fresh response may be cached (`Cache-Control`). |
+| `USE_CACHE_BUT_REQUEST_TTL` | — | Seconds a cached response may be served while revalidating. |
+| `USE_CACHE_IF_ERROR_TTL` | — | Seconds a cached response may be served if the origin errors. |
+| `DEBUG` | — | Set to `true` for verbose error output. |
+
+For local development, put these in a `.local.env` file in the project root (git-ignored). `composer start` exports it automatically:
+
+```env
+CHRISTIANBROWN_DATABASE_DSN=mysql://user:password@localhost/schema?unix_socket=/tmp/cloudsql/project:region:instance&driver=pdo_mysql
+K_REVISION=local
+```
+
+Locally, the DSN's `unix_socket` typically points at a running
+[Cloud SQL Auth Proxy](https://cloud.google.com/sql/docs/mysql/connect-auth-proxy) socket; in Cloud
+Run the socket is `/cloudsql/<instance connection name>`, mounted by the deploy's
+`--set-cloudsql-instances`.
+
+
+
+## :computer: Usage
+
+### Run locally
+
+```bash
+composer start
+```
+
+This serves the function at `http://localhost:8080` (override with `PORT`). Send it a request at one of the curated routes:
+
+```bash
+curl http://localhost:8080/daily-3-month
+```
+
+The `{route}` path segment is a whitelist of `{resolution}-{lookback}`. Hourly is capped at a day/month — longer hourly windows would return too many buckets — so the longer windows are daily only:
 
 | Route | Resolution | Window |
 | --- | --- | --- |
@@ -18,64 +85,117 @@ hourly windows would return too many buckets):
 | `/daily-6-month` | daily | last 6 months |
 | `/daily-12-month` | daily | last 12 months |
 
-The window runs from that period before *now* up to now. Buckets are **UTC** (`hour` 0 = 00:00–00:59
-UTC). Responses are cached for an hour at the edge.
+The window runs from that period before *now* up to now. Buckets are **UTC** (`hour` 0 = 00:00–00:59 UTC), and responses are cached for an hour at the edge.
 
-Returns a `data[]` array, ordered by date (then hour) earliest first:
+### Response
 
-```jsonc
-// daily
-{ "date": "2026-07-22", "insideMaxTemp": 24.8, "insideMinTemp": 24.7,
-  "insideMinHumidity": 55.0, "insideMaxHumidity": 55.0,
-  "outsideMaxTemp": 18.8, "outsideMinTemp": 17.6,
-  "outsideMinHumidity": 66.9, "outsideMaxHumidity": 71.3 }
+The payload is the shared JSON success envelope; the function-specific `data` array holds one entry per time bucket, ordered by date (then hour) earliest first:
 
-// hourly adds "hour": 0–23
-{ "date": "2026-07-22", "hour": 23, "insideMaxTemp": 24.8, ... }
+```json
+{
+    "data": [
+        {
+            "date": "2026-07-19",
+            "insideMaxTemp": 24.1,
+            "insideMinTemp": 19.3,
+            "insideMinHumidity": 41.2,
+            "insideMaxHumidity": 58.7,
+            "outsideMaxTemp": 22.6,
+            "outsideMinTemp": 11.8,
+            "outsideMinHumidity": 44,
+            "outsideMaxHumidity": 89
+        },
+        {
+            "date": "2026-07-20",
+            "insideMaxTemp": 25,
+            "insideMinTemp": 20.1,
+            "insideMinHumidity": 39.5,
+            "insideMaxHumidity": 55,
+            "outsideMaxTemp": null,
+            "outsideMinTemp": null,
+            "outsideMinHumidity": null,
+            "outsideMaxHumidity": null
+        }
+    ],
+    "success": true,
+    "timestamp_unix": 1784571588,
+    "timestamp_iso8601": "2026-07-20T18:19:48+00:00",
+    "version": "get-historical-climate-data-00007-abc"
+}
 ```
 
-A bucket present on only one source keeps `null` for the other side's four fields. Values are rounded
-to two decimals. The response shape is documented by the committed `openapi.yaml` (see
-[API documentation](#api-documentation)).
+- `data` — the time buckets over the lookback window, ordered earliest first. Omitted entirely when no data falls in the window.
+- `date` — the bucket date (UTC), as `YYYY-MM-DD`. Always present on a bucket.
+- `hour` — the bucket hour (UTC, `0`–`23`). Present only on the **hourly** resolutions.
+- `insideMaxTemp` / `insideMinTemp` — highest/lowest inside (SmartThings) temperature in the bucket, in °C.
+- `insideMinHumidity` / `insideMaxHumidity` — lowest/highest inside relative humidity in the bucket, as a percentage.
+- `outsideMaxTemp` / `outsideMinTemp` — highest/lowest outside (Met Office) temperature in the bucket, in °C.
+- `outsideMinHumidity` / `outsideMaxHumidity` — lowest/highest outside relative humidity in the bucket, as a percentage.
+- The eight inside/outside min/max fields are always present, but a bucket that only one source reported in keeps `null` for the other side's four fields. All values are rounded to two decimals.
+- `success`, `timestamp_unix`, `timestamp_iso8601`, `version` — the shared envelope fields every function returns (`version` is the Cloud Run revision that produced the response).
 
-## How it works
 
-The aggregation lives in the shared `christianjbrown/php-christianbrown-database-orm` package
-(`ClimateHistoryReader`): one grouped `MIN`/`MAX` query per table (`smartthings_climate`,
-`met_office_weather`), served by the covering index `(recorded_at, temperature, humidity)` as an
-index-only scan. This function parses the path, runs the reader against both tables for the window, and
-merges the two per-bucket results into the response. Responses are edge-cached by Fastly, so most
-requests never reach the database.
 
-## Commands
+## :test_tube: Tests & code style
 
-`composer install` first (needs SSH / `COMPOSER_AUTH` for the private sibling packages).
+```bash
+composer test              # PHPUnit with coverage, then opens the HTML report
+composer check-style       # PHPCS across src/ and tests/
+composer check-style-diff  # PHPCS on changed files only
+composer fix-style         # auto-fix style in src/ and tests/
+composer fix-style-diff    # auto-fix changed files only
+```
 
-| Task | Command |
-| --- | --- |
-| Run locally (Functions Framework) | `composer start` |
-| Tests + coverage | `composer test` |
-| Static analysis (PHPStan level max) | `composer stan` |
-| Check / fix style | `composer check-style` / `composer fix-style` |
-| Regenerate `openapi.yaml` from `#[OA\...]` attributes | `composer openapi:generate` |
-| Preview the API docs live in a browser | `npm install` then `npm run docs:preview` |
-| Build a shareable static `openapi.html` | `npm run docs:build` |
-| Lint `openapi.yaml` | `npm run docs:lint` |
 
-A local run needs `CHRISTIANBROWN_DATABASE_DSN` (a reachable MySQL DSN — e.g. the shared instance via
-the Cloud SQL proxy) and `K_REVISION` in `.local.env`; see the sibling functions for the full env-var
-list.
 
-## API documentation
+## :books: API documentation
 
-The HTTP contract is described by the committed [`openapi.yaml`](openapi.yaml), which is **generated**
-from the `#[OA\...]` attributes in `src/` (`OpenApi.php` plus the `ClimateHistoryBucket` schema on
-`OutputTransformerInterface`) — run `composer openapi:generate` to rebuild it. The success response
-composes the shared `SuccessEnvelope` (from `php-gcp-function-lib`) with this function's `data` array of
-`ClimateHistoryBucket`s via `allOf`. `tests/ContractTest.php` validates the function's real responses
-against the spec, so the contract cannot silently drift from the code.
+The committed `openapi.yaml` is generated from the `#[OA\...]` attributes in `src/`
+(`composer openapi:generate`). The success response composes the shared `SuccessEnvelope` (from
+`php-gcp-function-lib`) with this function's `data` array of `ClimateHistoryBucket`s via `allOf`, and
+`tests/ContractTest.php` validates the function's real responses against the spec so the contract
+cannot silently drift from the code. Dev-only [Redoc](https://redocly.com/redoc) tooling
+(`@redocly/cli`) renders and lints it — it is separate from the PHP runtime and excluded from both git
+and the GCP deploy, so it never affects the deployed function.
 
-The `npm run docs:*` scripts are **dev-only** [Redoc](https://redocly.com/redoc) tooling
-(`@redocly/cli`) for rendering/linting the spec; they are separate from the PHP runtime and excluded
-from git and the GCP deploy (`node_modules/`, `package.json`, `redocly.yaml`, `openapi.html` are all in
-`.gcloudignore`). Do not hand-edit `openapi.yaml` — CI regenerates it and fails on any drift.
+```bash
+npm install            # one-time: installs the docs tooling (Node/npm)
+npm run docs:preview   # live browser preview of openapi.yaml (local server)
+npm run docs:build     # write a shareable static openapi.html (git-ignored build artifact)
+npm run docs:lint      # lint openapi.yaml
+```
+
+
+
+## :rocket: CI & deployment
+
+- **`.github/workflows/ci.yml`** runs on pushes and pull requests to `main`: `composer install`, PHPCS, PHPStan, PHPUnit, and an OpenAPI spec-drift check.
+- **`.github/workflows/deploy.yml`** runs on push to `main`: deploys the Cloud Run function (`php85` runtime, `europe-west2`, function name `get-historical-climate-data`) via Workload Identity Federation, grants public (`allUsers`) invoker access on the underlying Cloud Run service, attaches the shared Cloud SQL instance (`--set-cloudsql-instances`) so the climate-history tables are reachable, smoke-tests the deployed URL, then purges the Fastly edge cache by surrogate key.
+
+Both workflows install the private `christianjbrown/*` dependencies using a `COMPOSER_AUTH` repository secret — a Composer auth JSON containing a GitHub token with read access to those repos (here it **must** be able to read the private `php-christianbrown-database-orm` repo):
+
+```json
+{"github-oauth":{"github.com":"your-github-token"}}
+```
+
+The database DSN and the required-header value are supplied at deploy time from Google Secret Manager (see `deploy.yml`). The runtime service account needs `roles/cloudsql.client` on the project that owns the shared database.
+
+
+
+## :package: Architecture
+
+The entry point is `run()` in [`index.php`](index.php), which wires the pieces together:
+
+- **`ConfigTransformer`** reads the environment into a `Config` (the database DSN + request/caching config), delegating the request-gating and caching env to the lib's `FunctionConfigTransformer`.
+- **`EntityManagerFactory`** / **`ClimateHistoryReader`** (from [`christianjbrown/php-christianbrown-database-orm`](https://github.com/christianjbrown/php-christianbrown-database-orm)) build a Doctrine entity manager over the DSN and run the grouped `MIN`/`MAX` aggregation query per table; the inside/outside table names come from the shared entity metadata, not string literals.
+- **`QueryParser`** / **`Query`** parse the request path into a resolution (`daily`/`hourly`) and lookback window; an unrecognised route throws a `UserFriendlyException` that becomes the JSON error envelope.
+- **`DataProvider`** derives the `[now - lookback, now)` UTC window, calls the reader once for the inside (`smartthings_climate`) table and once for the outside (`met_office_weather`) table, and hands both result sets to the `OutputTransformer`.
+- **`OutputTransformer`** merges the two sides by a chronologically-sortable bucket key so a plain sort yields earliest-first order, rounds every value to two decimals, and shapes the `data` array (a bucket present on one side only keeps `null` for the other side's fields).
+- **`RequestHandler`** wraps the factory wiring and `CloudFunction::run()` in one `try/catch`, returning the framework's JSON error envelope on any failure so a database problem never escapes as a bare 500.
+- **`CloudFunction`** (from [`christianjbrown/php-gcp-function-lib`](https://github.com/christianjbrown/php-gcp-function-lib)) handles the HTTP request/response, header/origin gating, and caching headers.
+
+
+
+## :page_facing_up: License
+
+Released under the [MIT License](LICENSE).
