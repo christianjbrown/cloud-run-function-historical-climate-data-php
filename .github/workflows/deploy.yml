@@ -18,7 +18,7 @@ jobs:
       id-token: 'write'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v5'
+        uses: 'actions/checkout@v7'
 
       - name: 'Authenticate with GCP'
         uses: 'google-github-actions/auth@v3'
@@ -66,7 +66,7 @@ jobs:
             --set-cloudsql-instances="${{ vars.GCP_CLOUD_SQL_INSTANCE }}"
 
       - name: 'Test Cloud Function'
-        run: 'curl "${{ steps.deploy.outputs.url }}/daily-month"'
+        run: 'curl "${{ steps.deploy.outputs.url }}/daily-1-month"'
 
       # Bust the Fastly edge cache so the new revision is served immediately.
       # Surrogate-key purge: the function emits `Surrogate-Key: <endpoint>` on
