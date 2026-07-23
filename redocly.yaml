@@ -1,0 +1,20 @@
+# Dev-only Redocly config for the OpenAPI docs tooling (see the docs:* scripts in
+# package.json). Not part of the PHP runtime or the GCP deploy (excluded via .gcloudignore).
+#
+# openapi.yaml is generated from the #[OA\...] attributes in src/ (composer openapi:generate)
+# and CI fails if it drifts, so it must not be hand-edited. It is deliberately minimal: a
+# single, header-gated endpoint. The opinionated governance rules below don't apply to that
+# shape, so they're relaxed here to let the generated contract lint clean without editing it.
+extends:
+  - recommended
+rules:
+  no-empty-servers: off  # the server is declared per-operation (servers: [{ url: / }])
+  security-defined: off  # auth is request-header gating (401), not an OpenAPI security scheme
+  info-license: off      # the licence lives in composer.json / LICENSE, not in the spec
+
+# Redoc rendering options for the published docs site: expand the 200 response and
+# its JSON sample by default so the happy-path payload is visible without clicking.
+theme:
+  openapi:
+    expandResponses: '200'
+    jsonSampleExpandLevel: all

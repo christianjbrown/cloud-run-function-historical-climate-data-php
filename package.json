@@ -1,0 +1,15 @@
+{
+  "name": "php-gcp-function-historical-climate-data-docs",
+  "version": "1.0.0",
+  "description": "Dev-only OpenAPI documentation tooling (Redoc via @redocly/cli) for the Historical Climate Data Cloud Function. Not part of the PHP runtime or the GCP deploy.",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "docs:preview": "redocly preview-docs openapi.yaml",
+    "docs:build": "redocly build-docs openapi.yaml --output openapi.html",
+    "docs:lint": "redocly lint openapi.yaml"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^1.34.17"
+  }
+}

@@ -8,3 +8,10 @@ bin/
 .phpstan.cache/
 .idea/
 tests/
+tools/
+node_modules
+package.json
+package-lock.json
+redocly.yaml
+openapi.html
+_site/

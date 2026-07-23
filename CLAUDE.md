@@ -36,10 +36,15 @@ Binaries install into `bin/` (Composer `bin-dir`). Run `composer install` first 
 | Tests + coverage | `composer test` |
 | Static analysis (PHPStan level max) | `composer stan` |
 | Check / fix style | `composer check-style` / `composer fix-style` |
+| Regenerate `openapi.yaml` from `#[OA\...]` attributes | `composer openapi:generate` |
+| Preview / build / lint the API docs | `npm install` then `npm run docs:preview` / `docs:build` / `docs:lint` |
 
 Always `composer fix-style`, then `check-style`, then `stan`, then `test` before finishing. CI
 (`.github/workflows/ci.yml`) runs the same three gates on push/PR to `main`, using the `COMPOSER_AUTH`
-secret — which here **must** be able to read the private `php-christianbrown-database-orm` repo.
+secret — which here **must** be able to read the private `php-christianbrown-database-orm` repo. The
+committed `openapi.yaml` is generated from the `#[OA\...]` attributes (`composer openapi:generate`) and
+CI fails on drift — **do not hand-edit it**. The `npm run docs:*` scripts are dev-only Redoc tooling
+(`node_modules/`, `package.json`, `redocly.yaml`, `openapi.html` are git-/deploy-ignored).
 
 ## Architecture
 
@@ -58,6 +63,12 @@ excluded from coverage/PHPStan/phpcs) is the composition root.
   shared `ClimateHistoryReader` once per table (inside = `smartthings_climate`, outside =
   `met_office_weather`), and hands both result sets to the `OutputTransformer`. Table names come from
   the shared entity metadata (`getClassMetadata(...)->getTableName()`), not string literals.
+- **`OpenApi`** — an inert `#[OA\...]` spec-holder (like the sibling functions): no runtime behaviour,
+  excluded from coverage in `phpunit.xml`. Its `#[OA\Get]` documents `GET /{route}` and composes the
+  shared `SuccessEnvelope` with a `data` array of `ClimateHistoryBucket` (the bucket schema lives on
+  `OutputTransformerInterface`) via `allOf`. `tests/ContractTest.php` validates real responses against
+  the generated `openapi.yaml`. This relies on the lib's `SuccessEnvelope` allowing an array/omitted
+  `data` payload (the `data[]` shape), not just an object.
 - **`OutputTransformer`** — merges the inside and outside per-bucket rows by a chronologically-sortable
   key (`YYYY-MM-DD` or `YYYY-MM-DDTHH`), so a plain `sort()` of the union yields earliest-first order.
   Builds each row with `$row + side($inside) + side($outside)`, where `+` preserves the fixed field
