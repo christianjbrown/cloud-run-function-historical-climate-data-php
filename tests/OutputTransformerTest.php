@@ -14,23 +14,24 @@ final class OutputTransformerTest extends TestCase
 {
     public function testDailyMergesBothSidesOrdersByDateAndNullsMissingSides(): void
     {
-        // Deliberately unsorted, with an inside-only day (20th), an outside-only
-        // day (21st) and a both-sides day (22nd).
+        // Deliberately unsorted, with an inside-only day (20th, temps not recorded
+        // so null), an outside-only day (21st) and a both-sides day (22nd) whose
+        // values carry >2 decimals to prove rounding.
         $inside = [
-            ['date' => '2026-07-20', 'hour' => null, 'minTemperature' => 18.0, 'maxTemperature' => 24.0, 'minHumidity' => 40.0, 'maxHumidity' => 55.0],
-            ['date' => '2026-07-22', 'hour' => null, 'minTemperature' => 19.0, 'maxTemperature' => 25.0, 'minHumidity' => 41.0, 'maxHumidity' => 56.0],
+            ['date' => '2026-07-20', 'hour' => null, 'minTemperature' => null, 'maxTemperature' => null, 'minHumidity' => 40.126, 'maxHumidity' => 55.0],
+            ['date' => '2026-07-22', 'hour' => null, 'minTemperature' => 18.333333, 'maxTemperature' => 24.866666666667, 'minHumidity' => 41.0, 'maxHumidity' => 56.0],
         ];
         $outside = [
-            ['date' => '2026-07-22', 'hour' => null, 'minTemperature' => 11.0, 'maxTemperature' => 21.0, 'minHumidity' => 61.0, 'maxHumidity' => 81.0],
+            ['date' => '2026-07-22', 'hour' => null, 'minTemperature' => 11.0, 'maxTemperature' => 21.0, 'minHumidity' => 61.789, 'maxHumidity' => 81.0],
             ['date' => '2026-07-21', 'hour' => null, 'minTemperature' => 10.0, 'maxTemperature' => 20.0, 'minHumidity' => 60.0, 'maxHumidity' => 80.0],
         ];
 
         $actual = (new OutputTransformer())->transform($inside, $outside, ClimateHistoryReaderInterface::RESOLUTION_DAILY);
 
         self::assertSame([
-            ['date' => '2026-07-20', 'insideMaxTemp' => 24.0, 'insideMinTemp' => 18.0, 'insideMinHumidity' => 40.0, 'insideMaxHumidity' => 55.0, 'outsideMaxTemp' => null, 'outsideMinTemp' => null, 'outsideMinHumidity' => null, 'outsideMaxHumidity' => null],
+            ['date' => '2026-07-20', 'insideMaxTemp' => null, 'insideMinTemp' => null, 'insideMinHumidity' => 40.13, 'insideMaxHumidity' => 55.0, 'outsideMaxTemp' => null, 'outsideMinTemp' => null, 'outsideMinHumidity' => null, 'outsideMaxHumidity' => null],
             ['date' => '2026-07-21', 'insideMaxTemp' => null, 'insideMinTemp' => null, 'insideMinHumidity' => null, 'insideMaxHumidity' => null, 'outsideMaxTemp' => 20.0, 'outsideMinTemp' => 10.0, 'outsideMinHumidity' => 60.0, 'outsideMaxHumidity' => 80.0],
-            ['date' => '2026-07-22', 'insideMaxTemp' => 25.0, 'insideMinTemp' => 19.0, 'insideMinHumidity' => 41.0, 'insideMaxHumidity' => 56.0, 'outsideMaxTemp' => 21.0, 'outsideMinTemp' => 11.0, 'outsideMinHumidity' => 61.0, 'outsideMaxHumidity' => 81.0],
+            ['date' => '2026-07-22', 'insideMaxTemp' => 24.87, 'insideMinTemp' => 18.33, 'insideMinHumidity' => 41.0, 'insideMaxHumidity' => 56.0, 'outsideMaxTemp' => 21.0, 'outsideMinTemp' => 11.0, 'outsideMinHumidity' => 61.79, 'outsideMaxHumidity' => 81.0],
         ], $actual);
     }
 
