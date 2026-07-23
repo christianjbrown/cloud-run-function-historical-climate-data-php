@@ -19,14 +19,22 @@ final class QueryParser implements QueryParserInterface
             throw new UserFriendlyException(self::ERROR_INVALID_PATH);
         }
 
-        // Curated whitelist of {resolution}-{lookback}. Hourly is capped at a
-        // day/month; the longer windows are daily only.
-        return match ($matches[1]) {
+        return self::resolveRoute($matches[1]);
+    }
+
+    /**
+     * Curated whitelist of {resolution}-{lookback}. Hourly is capped at a
+     * day/month; the longer windows are daily only.
+     */
+    private static function resolveRoute(string $route): QueryInterface
+    {
+        return match ($route) {
             'hourly-day' => new Query(ClimateHistoryReaderInterface::RESOLUTION_HOURLY, 'P1D'),
-            'hourly-month' => new Query(ClimateHistoryReaderInterface::RESOLUTION_HOURLY, 'P1M'),
+            'hourly-1-month' => new Query(ClimateHistoryReaderInterface::RESOLUTION_HOURLY, 'P1M'),
+            'daily-1-month' => new Query(ClimateHistoryReaderInterface::RESOLUTION_DAILY, 'P1M'),
             'daily-3-month' => new Query(ClimateHistoryReaderInterface::RESOLUTION_DAILY, 'P3M'),
             'daily-6-month' => new Query(ClimateHistoryReaderInterface::RESOLUTION_DAILY, 'P6M'),
-            'daily-year' => new Query(ClimateHistoryReaderInterface::RESOLUTION_DAILY, 'P1Y'),
+            'daily-12-month' => new Query(ClimateHistoryReaderInterface::RESOLUTION_DAILY, 'P1Y'),
             default => throw new UserFriendlyException(self::ERROR_INVALID_PATH),
         };
     }

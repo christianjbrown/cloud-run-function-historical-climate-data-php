@@ -12,10 +12,11 @@ hourly windows would return too many buckets):
 | Route | Resolution | Window |
 | --- | --- | --- |
 | `/hourly-day` | hourly | last day |
-| `/hourly-month` | hourly | last month |
+| `/hourly-1-month` | hourly | last month |
+| `/daily-1-month` | daily | last month |
 | `/daily-3-month` | daily | last 3 months |
 | `/daily-6-month` | daily | last 6 months |
-| `/daily-year` | daily | last year |
+| `/daily-12-month` | daily | last 12 months |
 
 The window runs from that period before *now* up to now. Buckets are **UTC** (`hour` 0 = 00:00–00:59
 UTC). Responses are cached for an hour at the edge.
