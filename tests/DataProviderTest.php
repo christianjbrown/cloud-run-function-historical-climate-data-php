@@ -25,7 +25,7 @@ final class DataProviderTest extends TestCase
     {
         $uri = self::createStub(UriInterface::class);
         $uri->method('getPath')
-            ->willReturn('/daily-month');
+            ->willReturn('/daily-6-month');
         $request = self::createStub(ServerRequestInterface::class);
         $request->method('getUri')
             ->willReturn($uri);
@@ -33,13 +33,13 @@ final class DataProviderTest extends TestCase
         $query = self::createStub(QueryInterface::class);
         $query->method('getResolution')
             ->willReturn('daily');
-        $query->method('getMonthsBack')
-            ->willReturn(1);
+        $query->method('getLookback')
+            ->willReturn('P6M');
 
         $queryParser = self::createMock(QueryParserInterface::class);
         $queryParser->expects(self::once())
             ->method('parse')
-            ->with('/daily-month')
+            ->with('/daily-6-month')
             ->willReturn($query);
 
         $insideRows = [['date' => '2026-07-20', 'hour' => null, 'minTemperature' => 18.0, 'maxTemperature' => 24.0, 'minHumidity' => 40.0, 'maxHumidity' => 55.0]];

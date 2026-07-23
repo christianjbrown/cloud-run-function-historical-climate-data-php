@@ -40,7 +40,7 @@ jobs:
           service_timeout: '60s'
           ingress_settings: 'ALLOW_ALL'
           build_environment_variables: 'COMPOSER_AUTH=${{ secrets.COMPOSER_AUTH }}'
-          environment_variables: 'USE_CACHE_TTL=300,USE_CACHE_BUT_REQUEST_TTL=600,USE_CACHE_IF_ERROR_TTL=3600,REQUIRED_HEADER_KEY=X-Request-Auth,REQUIRED_ORIGIN=${{ vars.REQUIRED_ORIGIN }},ALLOW_LOCAL_ORIGINS=true'
+          environment_variables: 'USE_CACHE_TTL=3600,USE_CACHE_BUT_REQUEST_TTL=3600,USE_CACHE_IF_ERROR_TTL=3600,REQUIRED_HEADER_KEY=X-Request-Auth,REQUIRED_ORIGIN=${{ vars.REQUIRED_ORIGIN }},ALLOW_LOCAL_ORIGINS=true'
           secrets: |-
             CHRISTIANBROWN_DATABASE_DSN=projects/${{ vars.GCP_PROJECT_ID }}/secrets/CHRISTIANBROWN_DATABASE_DSN/versions/latest
             REQUIRED_HEADER_VALUE=projects/${{ vars.GCP_PROJECT_ID }}/secrets/FASTLY_REQUIRED_HEADER_VALUE/versions/latest

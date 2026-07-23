@@ -6,12 +6,19 @@ lookback window.
 
 ## Endpoint
 
-```
-GET /{daily|hourly}-{month|6-month|year}
-```
+`GET /{route}`, where `{route}` is one of a curated whitelist (hourly is capped at a day/month — longer
+hourly windows would return too many buckets):
 
-e.g. `/daily-year`, `/hourly-month`, `/daily-6-month`. The window runs from that period before *now*
-up to now. Buckets are **UTC** (`hour` 0 = 00:00–00:59 UTC).
+| Route | Resolution | Window |
+| --- | --- | --- |
+| `/hourly-day` | hourly | last day |
+| `/hourly-month` | hourly | last month |
+| `/daily-3-month` | daily | last 3 months |
+| `/daily-6-month` | daily | last 6 months |
+| `/daily-year` | daily | last year |
+
+The window runs from that period before *now* up to now. Buckets are **UTC** (`hour` 0 = 00:00–00:59
+UTC). Responses are cached for an hour at the edge.
 
 Returns a `data[]` array, ordered by date (then hour) earliest first:
 

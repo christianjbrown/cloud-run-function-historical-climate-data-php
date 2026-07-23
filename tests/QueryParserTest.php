@@ -16,25 +16,27 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(QueryParser::class)]
 final class QueryParserTest extends TestCase
 {
-    #[TestWith(['/daily-month', 'daily', 1])]
-    #[TestWith(['/hourly-month', 'hourly', 1])]
-    #[TestWith(['/daily-6-month', 'daily', 6])]
-    #[TestWith(['/hourly-year', 'hourly', 12])]
-    #[TestWith(['/get-historical-climate-data/daily-year', 'daily', 12])]
-    public function testParse(string $path, string $expectedResolution, int $expectedMonthsBack): void
+    #[TestWith(['/hourly-day', 'hourly', 'P1D'])]
+    #[TestWith(['/hourly-month', 'hourly', 'P1M'])]
+    #[TestWith(['/daily-3-month', 'daily', 'P3M'])]
+    #[TestWith(['/daily-6-month', 'daily', 'P6M'])]
+    #[TestWith(['/daily-year', 'daily', 'P1Y'])]
+    #[TestWith(['/get-historical-climate-data/daily-year', 'daily', 'P1Y'])]
+    public function testParse(string $path, string $expectedResolution, string $expectedLookback): void
     {
         $query = (new QueryParser())->parse($path);
 
         self::assertSame($expectedResolution, $query->getResolution());
-        self::assertSame($expectedMonthsBack, $query->getMonthsBack());
+        self::assertSame($expectedLookback, $query->getLookback());
     }
 
     #[TestWith([''])]
     #[TestWith(['/foo'])]
     #[TestWith(['/daily'])]
-    #[TestWith(['/daily-week'])]
-    #[TestWith(['/weekly-year'])]
-    #[TestWith(['/daily-yearx'])]
+    #[TestWith(['/daily-day'])]
+    #[TestWith(['/daily-month'])]
+    #[TestWith(['/hourly-6-month'])]
+    #[TestWith(['/hourly-year'])]
     public function testParseRejectsInvalidPaths(string $path): void
     {
         $this->expectException(UserFriendlyException::class);
