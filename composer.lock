@@ -3840,12 +3840,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/christianjbrown/php-code-quality-scripts.git",
-                "reference": "292df32dba8540b2a102dca729084a243cf94ad0"
+                "reference": "487a2c10ed7e4cbdb9ae2d4ef147c3d522ec39bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/christianjbrown/php-code-quality-scripts/zipball/292df32dba8540b2a102dca729084a243cf94ad0",
-                "reference": "292df32dba8540b2a102dca729084a243cf94ad0",
+                "url": "https://api.github.com/repos/christianjbrown/php-code-quality-scripts/zipball/487a2c10ed7e4cbdb9ae2d4ef147c3d522ec39bf",
+                "reference": "487a2c10ed7e4cbdb9ae2d4ef147c3d522ec39bf",
                 "shasum": ""
             },
             "require": {
@@ -3928,7 +3928,7 @@
             "support": {
                 "source": "https://github.com/christianjbrown/php-code-quality-scripts/tree/main"
             },
-            "time": "2026-07-23T01:33:05+00:00"
+            "time": "2026-07-23T01:55:43+00:00"
         },
         {
             "name": "clue/ndjson-react",
