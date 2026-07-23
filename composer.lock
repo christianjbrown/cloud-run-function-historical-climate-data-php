@@ -3840,12 +3840,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/christianjbrown/php-code-quality-scripts.git",
-                "reference": "1e1bc4e5f0b627186eca3ccaf2546794a7946f49"
+                "reference": "292df32dba8540b2a102dca729084a243cf94ad0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/christianjbrown/php-code-quality-scripts/zipball/1e1bc4e5f0b627186eca3ccaf2546794a7946f49",
-                "reference": "1e1bc4e5f0b627186eca3ccaf2546794a7946f49",
+                "url": "https://api.github.com/repos/christianjbrown/php-code-quality-scripts/zipball/292df32dba8540b2a102dca729084a243cf94ad0",
+                "reference": "292df32dba8540b2a102dca729084a243cf94ad0",
                 "shasum": ""
             },
             "require": {
@@ -3869,6 +3869,11 @@
                 "src/php-cs-fix-diff"
             ],
             "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ChristianBrown\\CodeQualityScripts\\PhpStan\\": "src/PhpStan/"
+                }
+            },
             "autoload-dev": {
                 "psr-4": {
                     "ChristianBrown\\CodeQualityScripts\\Tests\\": "tests/"
@@ -3882,13 +3887,13 @@
                     "clear && ./bin/phpstan analyse"
                 ],
                 "check-style": [
-                    "clear && ./src/php-cs ./config ./tests"
+                    "clear && ./src/php-cs ./config ./src/PhpStan ./tests"
                 ],
                 "check-style-diff": [
                     "clear && ./src/php-cs-diff"
                 ],
                 "fix-style": [
-                    "clear && ./src/php-cs-fix ./config ./tests"
+                    "clear && ./src/php-cs-fix ./config ./src/PhpStan ./tests"
                 ],
                 "fix-style-diff": [
                     "clear && ./src/php-cs-fix-diff"
@@ -3923,7 +3928,7 @@
             "support": {
                 "source": "https://github.com/christianjbrown/php-code-quality-scripts/tree/main"
             },
-            "time": "2026-07-20T20:24:35+00:00"
+            "time": "2026-07-23T01:33:05+00:00"
         },
         {
             "name": "clue/ndjson-react",
