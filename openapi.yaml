@@ -1,0 +1,191 @@
+openapi: 3.0.0
+info:
+  title: 'Historical Climate Data Cloud Function'
+  description: 'Returns per-day or per-hour min/max temperature and humidity — inside from SmartThings, outside from the Met Office — over a lookback window, as a single JSON envelope whose data is an array of time buckets ordered earliest first.'
+  version: 1.0.0
+paths:
+  '/{route}':
+    get:
+      summary: 'Get historical inside/outside climate for a resolution and lookback window.'
+      description: 'Returns per-bucket min/max temperature and humidity over a lookback window. The `{route}` segment is a curated whitelist of `{resolution}-{lookback}`; hourly is capped at a day/month because longer hourly windows return too many buckets.'
+      operationId: getClimateHistory
+      parameters:
+        -
+          name: route
+          in: path
+          description: 'The resolution and lookback window. Hourly is capped at a day or a month.'
+          required: true
+          schema:
+            type: string
+            enum:
+              - hourly-day
+              - hourly-1-month
+              - daily-1-month
+              - daily-3-month
+              - daily-6-month
+              - daily-12-month
+      responses:
+        '200':
+          description: 'The per-bucket climate history for the requested resolution and window, ordered earliest first.'
+          headers:
+            Access-Control-Allow-Methods:
+              description: 'Allowed CORS methods.'
+              schema:
+                type: string
+            Access-Control-Allow-Origin:
+              description: 'Configured allowed origin (present when a required origin is configured).'
+              schema:
+                type: string
+            Cache-Control:
+              description: 'CDN/browser cache directives (present when cache TTLs are configured).'
+              schema:
+                type: string
+            Surrogate-Control:
+              description: 'Surrogate cache directives (present when cache TTLs are configured).'
+              schema:
+                type: string
+            Vary:
+              description: 'Vary list (present when a required origin is configured).'
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/SuccessEnvelope' }
+                  - { properties: { data: { description: 'The time buckets over the lookback window, ordered earliest first. Empty (and so the key is omitted) when no data falls in the window.', type: array, items: { $ref: '#/components/schemas/ClimateHistoryBucket' } } }, type: object }
+              example:
+                data:
+                  - { date: '2026-07-19', insideMaxTemp: 24.1, insideMinTemp: 19.3, insideMinHumidity: 41.2, insideMaxHumidity: 58.7, outsideMaxTemp: 22.6, outsideMinTemp: 11.8, outsideMinHumidity: 44, outsideMaxHumidity: 89 }
+                  - { date: '2026-07-20', insideMaxTemp: 25, insideMinTemp: 20.1, insideMinHumidity: 39.5, insideMaxHumidity: 55, outsideMaxTemp: null, outsideMinTemp: null, outsideMinHumidity: null, outsideMaxHumidity: null }
+                success: true
+                timestamp_iso8601: '2026-07-20T18:19:48+00:00'
+                timestamp_unix: 1784571588
+                version: get-historical-climate-data-00007-abc
+        '401':
+          description: 'The request failed header authorization.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: 'The path was not a recognised route, the database could not be reached, or an unhandled error occurred.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+      servers:
+        -
+          url: /
+components:
+  schemas:
+    ClimateHistoryBucket:
+      description: 'One time bucket. `date` is always present; `hour` is present only for the hourly resolutions. The eight inside/outside min/max fields are always present but are null for a side that reported no data in that bucket. Values are rounded to two decimals.'
+      required:
+        - date
+        - insideMaxTemp
+        - insideMinTemp
+        - insideMinHumidity
+        - insideMaxHumidity
+        - outsideMaxTemp
+        - outsideMinTemp
+        - outsideMinHumidity
+        - outsideMaxHumidity
+      properties:
+        date:
+          description: 'The bucket date (UTC), as `YYYY-MM-DD`.'
+          type: string
+          format: date
+        hour:
+          description: 'The bucket hour (UTC, 0-23). Present only for the hourly resolutions.'
+          type: integer
+        insideMaxTemp:
+          description: 'Highest inside (SmartThings) temperature in the bucket (degrees Celsius).'
+          type: number
+          nullable: true
+        insideMinTemp:
+          description: 'Lowest inside temperature in the bucket (degrees Celsius).'
+          type: number
+          nullable: true
+        insideMinHumidity:
+          description: 'Lowest inside relative humidity in the bucket (percent).'
+          type: number
+          nullable: true
+        insideMaxHumidity:
+          description: 'Highest inside relative humidity in the bucket (percent).'
+          type: number
+          nullable: true
+        outsideMaxTemp:
+          description: 'Highest outside (Met Office) temperature in the bucket (degrees Celsius).'
+          type: number
+          nullable: true
+        outsideMinTemp:
+          description: 'Lowest outside temperature in the bucket (degrees Celsius).'
+          type: number
+          nullable: true
+        outsideMinHumidity:
+          description: 'Lowest outside relative humidity in the bucket (percent).'
+          type: number
+          nullable: true
+        outsideMaxHumidity:
+          description: 'Highest outside relative humidity in the bucket (percent).'
+          type: number
+          nullable: true
+      type: object
+      additionalProperties: false
+    ErrorEnvelope:
+      description: 'The complete JSON error envelope returned by every consuming function for a failed request (an authorization failure or an unhandled error). Identical for every function.'
+      required:
+        - success
+        - timestamp_unix
+        - timestamp_iso8601
+        - version
+        - error
+      properties:
+        success:
+          description: 'Always false for an error response.'
+          type: boolean
+          enum:
+            - false
+        timestamp_unix:
+          description: 'When the response was generated (Unix seconds).'
+          type: integer
+        timestamp_iso8601:
+          description: 'When the response was generated (ISO 8601).'
+          type: string
+          format: date-time
+        version:
+          description: 'The Cloud Run revision that produced the response.'
+          type: string
+        error:
+          description: 'A human-readable description of what went wrong.'
+          type: string
+      type: object
+      additionalProperties: false
+    SuccessEnvelope:
+      description: 'The shared base of the JSON success envelope returned by every consuming function. The `data` property is a generic, untyped payload placeholder — a function tightens it to its own object or array schema by composing this base with `allOf`, e.g. `allOf: [{$ref: "#/components/schemas/SuccessEnvelope"}, {properties: {data: {$ref: "#/components/schemas/YourData"}}}]`. It is omitted from `required` because a function with an empty payload emits no `data` key at all.'
+      required:
+        - success
+        - timestamp_unix
+        - timestamp_iso8601
+        - version
+      properties:
+        success:
+          description: 'Always true for a success response.'
+          type: boolean
+          enum:
+            - true
+        timestamp_unix:
+          description: 'When the response was generated (Unix seconds).'
+          type: integer
+        timestamp_iso8601:
+          description: 'When the response was generated (ISO 8601).'
+          type: string
+          format: date-time
+        version:
+          description: 'The Cloud Run revision that produced the response.'
+          type: string
+        data:
+          description: 'The function-specific payload (object or array). Each function overrides this via `allOf` with its own data schema.'
+      type: object
+      additionalProperties: false

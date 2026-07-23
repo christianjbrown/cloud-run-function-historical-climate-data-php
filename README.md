@@ -34,8 +34,9 @@ Returns a `data[]` array, ordered by date (then hour) earliest first:
 { "date": "2026-07-22", "hour": 23, "insideMaxTemp": 24.8, ... }
 ```
 
-A bucket present on only one source keeps `null` for the other side's four fields. Values are the exact
-stored min/max (unrounded).
+A bucket present on only one source keeps `null` for the other side's four fields. Values are rounded
+to two decimals. The response shape is documented by the committed `openapi.yaml` (see
+[API documentation](#api-documentation)).
 
 ## How it works
 
@@ -56,7 +57,25 @@ requests never reach the database.
 | Tests + coverage | `composer test` |
 | Static analysis (PHPStan level max) | `composer stan` |
 | Check / fix style | `composer check-style` / `composer fix-style` |
+| Regenerate `openapi.yaml` from `#[OA\...]` attributes | `composer openapi:generate` |
+| Preview the API docs live in a browser | `npm install` then `npm run docs:preview` |
+| Build a shareable static `openapi.html` | `npm run docs:build` |
+| Lint `openapi.yaml` | `npm run docs:lint` |
 
 A local run needs `CHRISTIANBROWN_DATABASE_DSN` (a reachable MySQL DSN — e.g. the shared instance via
 the Cloud SQL proxy) and `K_REVISION` in `.local.env`; see the sibling functions for the full env-var
 list.
+
+## API documentation
+
+The HTTP contract is described by the committed [`openapi.yaml`](openapi.yaml), which is **generated**
+from the `#[OA\...]` attributes in `src/` (`OpenApi.php` plus the `ClimateHistoryBucket` schema on
+`OutputTransformerInterface`) — run `composer openapi:generate` to rebuild it. The success response
+composes the shared `SuccessEnvelope` (from `php-gcp-function-lib`) with this function's `data` array of
+`ClimateHistoryBucket`s via `allOf`. `tests/ContractTest.php` validates the function's real responses
+against the spec, so the contract cannot silently drift from the code.
+
+The `npm run docs:*` scripts are **dev-only** [Redoc](https://redocly.com/redoc) tooling
+(`@redocly/cli`) for rendering/linting the spec; they are separate from the PHP runtime and excluded
+from git and the GCP deploy (`node_modules/`, `package.json`, `redocly.yaml`, `openapi.html` are all in
+`.gcloudignore`). Do not hand-edit `openapi.yaml` — CI regenerates it and fails on any drift.
