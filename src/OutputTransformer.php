@@ -13,6 +13,7 @@ use function array_merge;
 use function array_unique;
 use function array_values;
 use function mb_substr;
+use function round;
 use function sort;
 use function sprintf;
 
@@ -29,8 +30,8 @@ final class OutputTransformer implements OutputTransformerInterface
      */
     public function transform(array $inside, array $outside, string $resolution): array
     {
-        $insideByKey = $this->indexByBucketKey($inside, $resolution);
-        $outsideByKey = $this->indexByBucketKey($outside, $resolution);
+        $insideByKey = self::indexByBucketKey($inside, $resolution);
+        $outsideByKey = self::indexByBucketKey($outside, $resolution);
 
         // A chronologically-sortable key ('YYYY-MM-DD' or 'YYYY-MM-DDTHH') means a
         // plain string sort of the union yields the required earliest-first order.
@@ -38,7 +39,7 @@ final class OutputTransformer implements OutputTransformerInterface
         sort($keys);
 
         return array_map(
-            fn (string $key): array => $this->buildRow($insideByKey[$key] ?? null, $outsideByKey[$key] ?? null, $key, $resolution),
+            static fn (string $key): array => self::buildRow($insideByKey[$key] ?? null, $outsideByKey[$key] ?? null, $key, $resolution),
             $keys
         );
     }
@@ -46,7 +47,7 @@ final class OutputTransformer implements OutputTransformerInterface
     /**
      * @param ClimateBucket $bucket
      */
-    private function bucketKey(array $bucket, string $resolution): string
+    private static function bucketKey(array $bucket, string $resolution): string
     {
         if (ClimateHistoryReaderInterface::RESOLUTION_HOURLY === $resolution) {
             return sprintf('%sT%02d', $bucket['date'], (int) $bucket['hour']);
@@ -61,7 +62,7 @@ final class OutputTransformer implements OutputTransformerInterface
      *
      * @return mixed[]
      */
-    private function buildRow(?array $inside, ?array $outside, string $key, string $resolution): array
+    private static function buildRow(?array $inside, ?array $outside, string $key, string $resolution): array
     {
         // The date (and hour) come from the sortable key, so no reference bucket is
         // needed when only one side is present.
@@ -72,7 +73,7 @@ final class OutputTransformer implements OutputTransformerInterface
 
         // `+` preserves insertion order, giving the fixed date[, hour], inside*,
         // outside* field order.
-        return $row + $this->side($inside, 'inside') + $this->side($outside, 'outside');
+        return $row + self::side($inside, 'inside') + self::side($outside, 'outside');
     }
 
     /**
@@ -80,14 +81,19 @@ final class OutputTransformer implements OutputTransformerInterface
      *
      * @return array<string, ClimateBucket>
      */
-    private function indexByBucketKey(array $buckets, string $resolution): array
+    private static function indexByBucketKey(array $buckets, string $resolution): array
     {
         $keys = array_map(
-            fn (array $bucket): string => $this->bucketKey($bucket, $resolution),
+            static fn (array $bucket): string => self::bucketKey($bucket, $resolution),
             $buckets
         );
 
         return array_combine($keys, $buckets);
+    }
+
+    private static function round2(?float $value): ?float
+    {
+        return null === $value ? null : round($value, 2);
     }
 
     /**
@@ -96,7 +102,7 @@ final class OutputTransformer implements OutputTransformerInterface
      *
      * @return array<string, null|float>
      */
-    private function side(?array $bucket, string $prefix): array
+    private static function side(?array $bucket, string $prefix): array
     {
         // Branch once (not per field) so a missing side is a single path — four
         // independent ternaries would explode the path-coverage combinations.
@@ -110,10 +116,10 @@ final class OutputTransformer implements OutputTransformerInterface
         }
 
         return [
-            $prefix.'MaxTemp' => $bucket['maxTemperature'],
-            $prefix.'MinTemp' => $bucket['minTemperature'],
-            $prefix.'MinHumidity' => $bucket['minHumidity'],
-            $prefix.'MaxHumidity' => $bucket['maxHumidity'],
+            $prefix.'MaxTemp' => self::round2($bucket['maxTemperature']),
+            $prefix.'MinTemp' => self::round2($bucket['minTemperature']),
+            $prefix.'MinHumidity' => self::round2($bucket['minHumidity']),
+            $prefix.'MaxHumidity' => self::round2($bucket['maxHumidity']),
         ];
     }
 }
