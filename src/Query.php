@@ -6,18 +6,18 @@ namespace ChristianBrown\HistoricalClimateData;
 
 final class Query implements QueryInterface
 {
-    private int $monthsBack;
+    private string $lookback;
     private string $resolution;
 
-    public function __construct(string $resolution, int $monthsBack)
+    public function __construct(string $resolution, string $lookback)
     {
         $this->resolution = $resolution;
-        $this->monthsBack = $monthsBack;
+        $this->lookback = $lookback;
     }
 
-    public function getMonthsBack(): int
+    public function getLookback(): string
     {
-        return $this->monthsBack;
+        return $this->lookback;
     }
 
     public function getResolution(): string

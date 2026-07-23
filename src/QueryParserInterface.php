@@ -6,13 +6,11 @@ namespace ChristianBrown\HistoricalClimateData;
 
 interface QueryParserInterface
 {
-    public const string ERROR_INVALID_PATH = 'Invalid path. Expected /{daily|hourly}-{month|6-month|year}.';
-    public const int MONTHS_6_MONTH = 6;
-    public const int MONTHS_MONTH = 1;
-    public const int MONTHS_YEAR = 12;
+    public const string ERROR_INVALID_PATH = 'Invalid path. Expected one of /hourly-day, /hourly-month, /daily-3-month, /daily-6-month, /daily-year.';
 
     /**
-     * Parses a `/{daily|hourly}-{month|6-month|year}` request path into a Query.
+     * Parses a request path into a Query. Valid routes are a curated whitelist:
+     * hourly is capped at a day/month (longer hourly windows return too much data).
      */
     public function parse(string $path): QueryInterface;
 }

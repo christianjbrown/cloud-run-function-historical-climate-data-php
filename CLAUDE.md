@@ -19,9 +19,11 @@ not here — this function only parses the path, drives the reader against both 
 
 ## The endpoint
 
-`GET /{daily|hourly}-{month|6-month|year}` — e.g. `/daily-year`. Buckets are **UTC**. The window is
-`[now - period, now)`. Returns a `data[]` list ordered earliest first; a bucket present on only one
-source keeps `null` for the other side's four fields; values are the exact stored min/max (unrounded).
+`GET /{route}`, where `{route}` is a curated whitelist: `hourly-day`, `hourly-month`, `daily-3-month`,
+`daily-6-month`, `daily-year` (hourly is capped at a day/month — longer hourly windows return too many
+buckets). Buckets are **UTC**. The window is `[now - lookback, now)`. Returns a `data[]` list ordered
+earliest first; a bucket present on only one source keeps `null` for the other side's four fields;
+values are rounded to 2 decimals. Responses are edge-cached for an hour.
 
 ## Commands
 
