@@ -9,8 +9,6 @@ use DateInterval;
 use DateTimeImmutable;
 use Psr\Http\Message\ServerRequestInterface;
 
-use function sprintf;
-
 final class DataProvider implements DataProviderInterface
 {
     private string $insideTable;
@@ -37,8 +35,8 @@ final class DataProvider implements DataProviderInterface
     {
         $query = $this->queryParser->parse($request->getUri()->getPath());
 
-        // The window runs from `monthsBack` before now up to now (UTC).
-        $start = $this->now->sub(new DateInterval(sprintf('P%dM', $query->getMonthsBack())));
+        // The window runs from the query's lookback before now up to now (UTC).
+        $start = $this->now->sub(new DateInterval($query->getLookback()));
 
         $inside = $this->reader->read($this->insideTable, $query->getResolution(), $start, $this->now);
         $outside = $this->reader->read($this->outsideTable, $query->getResolution(), $start, $this->now);

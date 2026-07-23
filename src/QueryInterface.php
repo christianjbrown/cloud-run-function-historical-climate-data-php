@@ -6,7 +6,10 @@ namespace ChristianBrown\HistoricalClimateData;
 
 interface QueryInterface
 {
-    public function getMonthsBack(): int;
+    /**
+     * The lookback window as an ISO-8601 duration (e.g. `P1D`, `P1M`, `P1Y`).
+     */
+    public function getLookback(): string;
 
     public function getResolution(): string;
 }
