@@ -11,7 +11,7 @@ min/max temperature and humidity — inside from SmartThings, outside from the M
 lookback window. It is an **application, not a library**: `run()` in `index.php` is the composition
 root that wires the sibling `christianjbrown/*` packages behind one HTTP entry point.
 
-It consumes the private `dev-main` packages `cloud-run-function-lib` (the HTTP envelope/gating/caching
+It consumes the `dev-main` packages `cloud-run-function-lib` (the HTTP envelope/gating/caching
 framework), `christianbrown-database-orm` (the shared Doctrine ORM — entities, `EntityManagerFactory`,
 and the `ClimateHistoryReader` that owns the aggregation SQL), and `user-friendly-exception`,
 plus `code-quality-scripts` (dev). The **read/aggregation logic lives in the shared ORM package**,
@@ -27,8 +27,9 @@ values are rounded to 2 decimals. Responses are edge-cached for an hour.
 
 ## Commands
 
-Binaries install into `bin/` (Composer `bin-dir`). Run `composer install` first (needs SSH /
-`COMPOSER_AUTH` for the private packages). This app **commits `composer.lock`**.
+Binaries install into `bin/` (Composer `bin-dir`). Run `composer install` first; its sibling
+`christianjbrown/*` dependencies are public GitHub repos, fetched with no authentication. This app
+**commits `composer.lock`**.
 
 | Task | Command |
 | --- | --- |
@@ -40,8 +41,9 @@ Binaries install into `bin/` (Composer `bin-dir`). Run `composer install` first 
 | Preview / build / lint the API docs | `npm install` then `npm run docs:preview` / `docs:build` / `docs:lint` |
 
 Always `composer fix-style`, then `check-style`, then `stan`, then `test` before finishing. CI
-(`.github/workflows/ci.yml`) runs the same three gates on push/PR to `main`, using the `COMPOSER_AUTH`
-secret — which here **must** be able to read the private `christianbrown-database-orm` repo. The
+(`.github/workflows/ci.yml`) runs the same three gates on push/PR to `main`; the `christianjbrown/*`
+dependencies are public, so it needs no credentials to install them (the `COMPOSER_AUTH` secret it
+still passes only lifts GitHub's API rate limit). The
 committed `openapi.yaml` is generated from the `#[OA\...]` attributes (`composer openapi:generate`) and
 CI fails on drift — **do not hand-edit it**. The `npm run docs:*` scripts are dev-only Redoc tooling
 (`node_modules/`, `package.json`, `redocly.yaml`, `openapi.html` are git-/deploy-ignored).

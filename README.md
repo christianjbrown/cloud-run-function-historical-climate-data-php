@@ -14,7 +14,7 @@ The route you request picks a resolution and window (e.g. `/daily-3-month` for t
 - [PHP](https://www.php.net/) 8.5 or higher (8.x)
 - [Composer](https://getcomposer.org/)
 - A MySQL database reachable by the function, holding the shared climate-history tables (`smartthings_climate` and `met_office_weather`) that the sibling functions append to
-- Read access to the private `christianjbrown/*` package repositories this function depends on (Composer needs a GitHub token — see [CI & deployment](#rocket-ci--deployment))
+- The `christianjbrown/*` package repositories this function depends on — all public GitHub repos, so Composer fetches them with no authentication
 
 :bulb: If you're on macOS and have [Homebrew](https://brew.sh/), PHP and Composer will install with `brew install composer`.
 
@@ -172,7 +172,7 @@ npm run docs:lint      # lint openapi.yaml
 - **`.github/workflows/ci.yml`** runs on pushes and pull requests to `main`: `composer install`, PHPCS, PHPStan, PHPUnit, and an OpenAPI spec-drift check.
 - **`.github/workflows/deploy.yml`** runs on push to `main`: deploys the Cloud Run function (`php85` runtime, `europe-west2`, function name `get-historical-climate-data`) via Workload Identity Federation, grants public (`allUsers`) invoker access on the underlying Cloud Run service, attaches the shared Cloud SQL instance (`--set-cloudsql-instances`) so the climate-history tables are reachable, smoke-tests the deployed URL, then purges the Fastly edge cache by surrogate key.
 
-Both workflows install the private `christianjbrown/*` dependencies using a `COMPOSER_AUTH` repository secret — a Composer auth JSON containing a GitHub token with read access to those repos (here it **must** be able to read the private `christianbrown-database-orm` repo):
+Both workflows install the `christianjbrown/*` dependencies with `composer install`. Those packages are public GitHub repositories, so no authentication is required to fetch them; the workflows still pass a `COMPOSER_AUTH` repository secret — a Composer auth JSON holding a GitHub token — only to raise GitHub's API rate limit for the install:
 
 ```json
 {"github-oauth":{"github.com":"your-github-token"}}
