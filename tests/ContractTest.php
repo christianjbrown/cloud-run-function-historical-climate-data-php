@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace ChristianBrown\HistoricalClimateData\Tests;
 
 use ChristianBrown\Database\ClimateHistoryReaderInterface;
-use ChristianBrown\GcpFunction\CloudFunction;
-use ChristianBrown\GcpFunction\DataProviderInterface as BaseDataProviderInterface;
-use ChristianBrown\GcpFunction\FunctionConfig;
-use ChristianBrown\GcpFunction\FunctionConfigInterface;
-use ChristianBrown\HistoricalClimateData\CloudFunctionFactoryInterface;
+use ChristianBrown\CloudRunFunction\CloudRunFunction;
+use ChristianBrown\CloudRunFunction\DataProviderInterface as BaseDataProviderInterface;
+use ChristianBrown\CloudRunFunction\FunctionConfig;
+use ChristianBrown\CloudRunFunction\FunctionConfigInterface;
+use ChristianBrown\HistoricalClimateData\CloudRunFunctionFactoryInterface;
 use ChristianBrown\HistoricalClimateData\OutputTransformer;
 use ChristianBrown\HistoricalClimateData\QueryParserInterface;
 use ChristianBrown\HistoricalClimateData\RequestHandler;
@@ -150,9 +150,9 @@ final class ContractTest extends TestCase
      */
     private function buildResponse(FunctionConfigInterface $config, BaseDataProviderInterface $dataProvider, ServerRequestInterface $request): ResponseInterface
     {
-        $cloudFunction = new CloudFunction($dataProvider, $config);
+        $cloudFunction = new CloudRunFunction($dataProvider, $config);
 
-        $cloudFunctionFactory = self::createStub(CloudFunctionFactoryInterface::class);
+        $cloudFunctionFactory = self::createStub(CloudRunFunctionFactoryInterface::class);
         $cloudFunctionFactory->method('create')
             ->willReturn($cloudFunction);
 

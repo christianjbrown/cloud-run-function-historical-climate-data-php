@@ -150,12 +150,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/christianjbrown/cloud-run-function-lib-php.git",
-                "reference": "5eeb6f7bba2546ad2a7027d3c390224751089fcd"
+                "reference": "de83d3844da4358377ce51785e0a75b649018448"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/christianjbrown/cloud-run-function-lib-php/zipball/5eeb6f7bba2546ad2a7027d3c390224751089fcd",
-                "reference": "5eeb6f7bba2546ad2a7027d3c390224751089fcd",
+                "url": "https://api.github.com/repos/christianjbrown/cloud-run-function-lib-php/zipball/de83d3844da4358377ce51785e0a75b649018448",
+                "reference": "de83d3844da4358377ce51785e0a75b649018448",
                 "shasum": ""
             },
             "require": {
@@ -174,12 +174,12 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "ChristianBrown\\GcpFunction\\": "src/"
+                    "ChristianBrown\\CloudRunFunction\\": "src/"
                 }
             },
             "autoload-dev": {
                 "psr-4": {
-                    "ChristianBrown\\GcpFunction\\Tests\\": "tests/"
+                    "ChristianBrown\\CloudRunFunction\\Tests\\": "tests/"
                 }
             },
             "scripts": {
@@ -222,7 +222,7 @@
             "support": {
                 "source": "https://github.com/christianjbrown/cloud-run-function-lib-php/tree/main"
             },
-            "time": "2026-07-24T13:54:57+00:00"
+            "time": "2026-07-24T14:38:06+00:00"
         },
         {
             "name": "christianjbrown/key-value-store",
