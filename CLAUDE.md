@@ -2,7 +2,7 @@
 
 Guidance for working in this repository. Match the existing conventions exactly — this codebase is
 small, uniform, and highly opinionated, so new code should be indistinguishable from what's here (and
-from its sibling `php-gcp-function-*` repos).
+from its sibling `cloud-run-function-*` repos).
 
 ## What this is
 
