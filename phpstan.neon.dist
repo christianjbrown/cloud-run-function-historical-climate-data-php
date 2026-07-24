@@ -1,5 +1,5 @@
 includes:
-    - vendor/christianjbrown/php-code-quality-scripts/config/phpstan.neon
+    - vendor/christianjbrown/code-quality-scripts/config/phpstan.neon
 
 parameters:
     tmpDir: .phpstan.cache

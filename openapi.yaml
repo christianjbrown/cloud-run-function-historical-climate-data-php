@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: 'Historical Climate Data Cloud Function'
+  title: 'Historical Climate Data Cloud Run function'
   description: 'Returns per-day or per-hour min/max temperature and humidity — inside from SmartThings, outside from the Met Office — over a lookback window, as a single JSON envelope whose data is an array of time buckets ordered earliest first.'
   version: 1.0.0
 paths:

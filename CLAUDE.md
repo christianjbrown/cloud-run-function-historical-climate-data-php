@@ -11,10 +11,10 @@ min/max temperature and humidity — inside from SmartThings, outside from the M
 lookback window. It is an **application, not a library**: `run()` in `index.php` is the composition
 root that wires the sibling `christianjbrown/*` packages behind one HTTP entry point.
 
-It consumes the private `dev-main` packages `php-gcp-function-lib` (the HTTP envelope/gating/caching
-framework), `php-christianbrown-database-orm` (the shared Doctrine ORM — entities, `EntityManagerFactory`,
-and the `ClimateHistoryReader` that owns the aggregation SQL), and `php-user-friendly-exception-lib`,
-plus `php-code-quality-scripts` (dev). The **read/aggregation logic lives in the shared ORM package**,
+It consumes the private `dev-main` packages `cloud-run-function-lib` (the HTTP envelope/gating/caching
+framework), `christianbrown-database-orm` (the shared Doctrine ORM — entities, `EntityManagerFactory`,
+and the `ClimateHistoryReader` that owns the aggregation SQL), and `user-friendly-exception`,
+plus `code-quality-scripts` (dev). The **read/aggregation logic lives in the shared ORM package**,
 not here — this function only parses the path, drives the reader against both tables, and merges.
 
 ## The endpoint
@@ -41,7 +41,7 @@ Binaries install into `bin/` (Composer `bin-dir`). Run `composer install` first 
 
 Always `composer fix-style`, then `check-style`, then `stan`, then `test` before finishing. CI
 (`.github/workflows/ci.yml`) runs the same three gates on push/PR to `main`, using the `COMPOSER_AUTH`
-secret — which here **must** be able to read the private `php-christianbrown-database-orm` repo. The
+secret — which here **must** be able to read the private `christianbrown-database-orm` repo. The
 committed `openapi.yaml` is generated from the `#[OA\...]` attributes (`composer openapi:generate`) and
 CI fails on drift — **do not hand-edit it**. The `npm run docs:*` scripts are dev-only Redoc tooling
 (`node_modules/`, `package.json`, `redocly.yaml`, `openapi.html` are git-/deploy-ignored).
@@ -83,7 +83,7 @@ excluded from coverage/PHPStan/phpcs) is the composition root.
   class members ordered **alphabetically**.
 - **A method that does not use `$this` must be `static`** (called via `self::`) — a stateless helper is
   static. Enforced for private methods by the shared `RequireStaticPrivateMethodRule` PHPStan rule (via
-  `php-code-quality-scripts`' `config/phpstan.neon`); interface/override methods stay instance (e.g.
+  `code-quality-scripts`' `config/phpstan.neon`); interface/override methods stay instance (e.g.
   `OutputTransformer::transform()`). php-cs-fixer already enforces the equivalent for closures
   (`static fn`).
 - Import functions explicitly (`use function sprintf;`) and call them unqualified.
