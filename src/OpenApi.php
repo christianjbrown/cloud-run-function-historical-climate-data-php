@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ChristianBrown\HistoricalClimateData;
 
-use ChristianBrown\GcpFunction\ResponseInterface;
+use ChristianBrown\CloudRunFunction\ResponseInterface;
 use OpenApi\Attributes as OA;
 
 /**

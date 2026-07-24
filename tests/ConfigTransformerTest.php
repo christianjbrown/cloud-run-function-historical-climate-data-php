@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ChristianBrown\HistoricalClimateData\Tests;
 
-use ChristianBrown\GcpFunction\FunctionConfigInterface;
-use ChristianBrown\GcpFunction\FunctionConfigTransformerInterface;
+use ChristianBrown\CloudRunFunction\FunctionConfigInterface;
+use ChristianBrown\CloudRunFunction\FunctionConfigTransformerInterface;
 use ChristianBrown\HistoricalClimateData\Config;
 use ChristianBrown\HistoricalClimateData\ConfigTransformer;
 use ChristianBrown\HistoricalClimateData\ConfigTransformerInterface;

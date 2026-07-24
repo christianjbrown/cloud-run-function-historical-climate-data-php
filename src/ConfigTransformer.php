@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ChristianBrown\HistoricalClimateData;
 
-use ChristianBrown\GcpFunction\FunctionConfigTransformerInterface;
+use ChristianBrown\CloudRunFunction\FunctionConfigTransformerInterface;
 use RuntimeException;
 
 use function is_string;

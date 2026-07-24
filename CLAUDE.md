@@ -51,7 +51,7 @@ CI fails on drift — **do not hand-edit it**. The `npm run docs:*` scripts are 
 Flat `src/`, PSR-4 `ChristianBrown\HistoricalClimateData\`. `index.php` (outside the namespace, so
 excluded from coverage/PHPStan/phpcs) is the composition root.
 
-- **`RequestHandler`** — wraps `factory->create()` + `CloudFunction::run()` in one `try/catch (Throwable)`,
+- **`RequestHandler`** — wraps `factory->create()` + `CloudRunFunction::run()` in one `try/catch (Throwable)`,
   returning the framework's JSON error envelope on failure (identical to the sibling functions).
 - **`Config` / `ConfigTransformer`** — hold and validate `CHRISTIANBROWN_DATABASE_DSN` (via the shared
   `extractRequiredString` guard), delegating the rest of the env to the lib's `FunctionConfigTransformer`.

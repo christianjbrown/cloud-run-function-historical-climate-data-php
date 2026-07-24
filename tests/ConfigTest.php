@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ChristianBrown\HistoricalClimateData\Tests;
 
-use ChristianBrown\GcpFunction\FunctionConfigInterface;
+use ChristianBrown\CloudRunFunction\FunctionConfigInterface;
 use ChristianBrown\HistoricalClimateData\Config;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
