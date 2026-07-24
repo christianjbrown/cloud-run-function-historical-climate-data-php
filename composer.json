@@ -1,6 +1,6 @@
 {
-    "name": "christianjbrown/php-gcp-function-historical-climate-data",
-    "description": "A PHP 8.5+ Google Cloud Function that returns per-day or per-hour min/max temperature and humidity (inside from SmartThings, outside from the Met Office) over a lookback window.",
+    "name": "christianjbrown/cloud-run-function-historical-climate-data",
+    "description": "A PHP 8.5+ Google Cloud Run function that returns per-day or per-hour min/max temperature and humidity (inside from SmartThings, outside from the Met Office) over a lookback window.",
     "type": "project",
     "license": "MIT",
     "minimum-stability": "dev",
@@ -21,13 +21,13 @@
     ],
     "require": {
         "php": "^8.5",
-        "christianjbrown/php-christianbrown-database-orm": "dev-main",
-        "christianjbrown/php-gcp-function-lib": "dev-main",
-        "christianjbrown/php-user-friendly-exception-lib": "dev-main",
+        "christianjbrown/christianbrown-database-orm": "dev-main",
+        "christianjbrown/cloud-run-function-lib": "dev-main",
+        "christianjbrown/user-friendly-exception": "dev-main",
         "google/cloud-functions-framework": "^1.1"
     },
     "require-dev": {
-        "christianjbrown/php-code-quality-scripts": "dev-main",
+        "christianjbrown/code-quality-scripts": "dev-main",
         "league/openapi-psr7-validator": "^0.24.0",
         "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^13.0",
@@ -82,23 +82,23 @@
     "repositories": [
         {
             "type": "github",
-            "url": "git@github.com:christianjbrown/php-christianbrown-database-orm.git"
+            "url": "git@github.com:christianjbrown/christianbrown-database-orm-php.git"
         },
         {
             "type": "github",
-            "url": "git@github.com:christianjbrown/php-code-quality-scripts.git"
+            "url": "git@github.com:christianjbrown/code-quality-scripts-php.git"
         },
         {
             "type": "github",
-            "url": "git@github.com:christianjbrown/php-gcp-function-lib.git"
+            "url": "git@github.com:christianjbrown/cloud-run-function-lib-php.git"
         },
         {
             "type": "github",
-            "url": "git@github.com:christianjbrown/php-key-value-store-lib.git"
+            "url": "git@github.com:christianjbrown/key-value-store-php.git"
         },
         {
             "type": "github",
-            "url": "git@github.com:christianjbrown/php-user-friendly-exception-lib.git"
+            "url": "git@github.com:christianjbrown/user-friendly-exception-php.git"
         }
     ]
 }

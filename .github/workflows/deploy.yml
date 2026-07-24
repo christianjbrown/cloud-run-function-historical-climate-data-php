@@ -11,7 +11,7 @@ on:
 
 jobs:
   deploy:
-    name: 'Deploy Cloud Function'
+    name: 'Deploy Cloud Run function'
     runs-on: 'ubuntu-latest'
     permissions:
       contents: 'read'
@@ -26,7 +26,7 @@ jobs:
           workload_identity_provider: 'projects/${{ vars.GCP_PROJECT_ID }}/locations/global/workloadIdentityPools/${{ vars.GCP_WIF_POOL }}/providers/${{ vars.GCP_WIF_PROVIDER }}'
           service_account: '${{ vars.GCP_SERVICE_ACCOUNT }}'
 
-      - name: 'Create or update Cloud Function'
+      - name: 'Create or update Cloud Run function'
         id: 'deploy'
         uses: 'google-github-actions/deploy-cloud-functions@v4'
         with:
@@ -65,7 +65,7 @@ jobs:
             --region='europe-west2' \
             --set-cloudsql-instances="${{ vars.GCP_CLOUD_SQL_INSTANCE }}"
 
-      - name: 'Test Cloud Function'
+      - name: 'Test Cloud Run function'
         run: 'curl "${{ steps.deploy.outputs.url }}/daily-1-month"'
 
       # Bust the Fastly edge cache so the new revision is served immediately.
