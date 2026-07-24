@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ChristianBrown\HistoricalClimateData\Tests;
 
-use ChristianBrown\Database\ClimateHistoryReaderInterface;
 use ChristianBrown\CloudRunFunction\CloudRunFunction;
 use ChristianBrown\CloudRunFunction\DataProviderInterface as BaseDataProviderInterface;
 use ChristianBrown\CloudRunFunction\FunctionConfig;
 use ChristianBrown\CloudRunFunction\FunctionConfigInterface;
+use ChristianBrown\Database\ClimateHistoryReaderInterface;
 use ChristianBrown\HistoricalClimateData\CloudRunFunctionFactoryInterface;
 use ChristianBrown\HistoricalClimateData\OutputTransformer;
 use ChristianBrown\HistoricalClimateData\QueryParserInterface;
