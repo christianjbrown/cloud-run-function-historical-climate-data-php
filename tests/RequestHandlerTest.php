@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ChristianBrown\HistoricalClimateData\Tests;
 
-use ChristianBrown\GcpFunction\CloudFunctionInterface;
-use ChristianBrown\GcpFunction\FunctionConfigInterface;
-use ChristianBrown\GcpFunction\JsonErrorResponse;
-use ChristianBrown\GcpFunction\JsonErrorResponseInterface;
-use ChristianBrown\HistoricalClimateData\CloudFunctionFactoryInterface;
+use ChristianBrown\CloudRunFunction\CloudRunFunctionInterface;
+use ChristianBrown\CloudRunFunction\FunctionConfigInterface;
+use ChristianBrown\CloudRunFunction\JsonErrorResponse;
+use ChristianBrown\CloudRunFunction\JsonErrorResponseInterface;
+use ChristianBrown\HistoricalClimateData\CloudRunFunctionFactoryInterface;
 use ChristianBrown\HistoricalClimateData\RequestHandler;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
@@ -28,18 +28,18 @@ final class RequestHandlerTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testReturnsTheCloudFunctionResponseOnSuccess(): void
+    public function testReturnsTheCloudRunFunctionResponseOnSuccess(): void
     {
         $request = self::createStub(ServerRequestInterface::class);
         $expectedResponse = self::createStub(ResponseInterface::class);
 
-        $cloudFunction = $this->createMock(CloudFunctionInterface::class);
+        $cloudFunction = $this->createMock(CloudRunFunctionInterface::class);
         $cloudFunction->expects(self::once())
             ->method('run')
             ->with($request)
             ->willReturn($expectedResponse);
 
-        $cloudFunctionFactory = $this->createMock(CloudFunctionFactoryInterface::class);
+        $cloudFunctionFactory = $this->createMock(CloudRunFunctionFactoryInterface::class);
         $cloudFunctionFactory->expects(self::once())
             ->method('create')
             ->willReturn($cloudFunction);
@@ -59,9 +59,9 @@ final class RequestHandlerTest extends TestCase
         $request = self::createStub(ServerRequestInterface::class);
 
         // A failure while building the entity manager / reader surfaces from the
-        // factory, before the CloudFunction exists — the handler must convert it
+        // factory, before the CloudRunFunction exists — the handler must convert it
         // into the framework's JSON error envelope, not let it escape as a bare 500.
-        $cloudFunctionFactory = self::createStub(CloudFunctionFactoryInterface::class);
+        $cloudFunctionFactory = self::createStub(CloudRunFunctionFactoryInterface::class);
         $cloudFunctionFactory->method('create')
             ->willThrowException(new RuntimeException('database connection failed'));
 

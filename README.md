@@ -191,8 +191,8 @@ The entry point is `run()` in [`index.php`](index.php), which wires the pieces t
 - **`QueryParser`** / **`Query`** parse the request path into a resolution (`daily`/`hourly`) and lookback window; an unrecognised route throws a `UserFriendlyException` that becomes the JSON error envelope.
 - **`DataProvider`** derives the `[now - lookback, now)` UTC window, calls the reader once for the inside (`smartthings_climate`) table and once for the outside (`met_office_weather`) table, and hands both result sets to the `OutputTransformer`.
 - **`OutputTransformer`** merges the two sides by a chronologically-sortable bucket key so a plain sort yields earliest-first order, rounds every value to two decimals, and shapes the `data` array (a bucket present on one side only keeps `null` for the other side's fields).
-- **`RequestHandler`** wraps the factory wiring and `CloudFunction::run()` in one `try/catch`, returning the framework's JSON error envelope on any failure so a database problem never escapes as a bare 500.
-- **`CloudFunction`** (from [`christianjbrown/cloud-run-function-lib`](https://github.com/christianjbrown/cloud-run-function-lib-php)) handles the HTTP request/response, header/origin gating, and caching headers.
+- **`RequestHandler`** wraps the factory wiring and `CloudRunFunction::run()` in one `try/catch`, returning the framework's JSON error envelope on any failure so a database problem never escapes as a bare 500.
+- **`CloudRunFunction`** (from [`christianjbrown/cloud-run-function-lib`](https://github.com/christianjbrown/cloud-run-function-lib-php)) handles the HTTP request/response, header/origin gating, and caching headers.
 
 
 
