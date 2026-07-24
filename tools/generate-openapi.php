@@ -9,7 +9,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 // Scan the typed `#[OA\...]` attributes under `src/` — plus the shared envelope
 // schema components (`SuccessEnvelope`/`ErrorEnvelope`) that live on the
-// `php-gcp-function-lib` `ResponseInterface` — and emit the OpenAPI 3.0 document.
+// `cloud-run-function-lib` `ResponseInterface` — and emit the OpenAPI 3.0 document.
 // Pinning the version to 3.0.0 keeps it inside the broadest validator support.
 // The result is written to the committed `openapi.yaml`; CI regenerates it and
 // fails on any diff, so the spec cannot drift from the attributes.
@@ -17,7 +17,7 @@ $openapi = (new Generator())
     ->setVersion(OpenApi::VERSION_3_0_0)
     ->generate([
         __DIR__ . '/../src',
-        __DIR__ . '/../vendor/christianjbrown/php-gcp-function-lib/src',
+        __DIR__ . '/../vendor/christianjbrown/cloud-run-function-lib/src',
     ]);
 
 if (!$openapi instanceof OpenApi) {

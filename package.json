@@ -1,7 +1,7 @@
 {
-  "name": "php-gcp-function-historical-climate-data-docs",
+  "name": "cloud-run-function-historical-climate-data-php-docs",
   "version": "1.0.0",
-  "description": "Dev-only OpenAPI documentation tooling (Redoc via @redocly/cli) for the Historical Climate Data Cloud Function. Not part of the PHP runtime or the GCP deploy.",
+  "description": "Dev-only OpenAPI documentation tooling (Redoc via @redocly/cli) for the Historical Climate Data Cloud Run function. Not part of the PHP runtime or the GCP deploy.",
   "private": true,
   "license": "MIT",
   "scripts": {

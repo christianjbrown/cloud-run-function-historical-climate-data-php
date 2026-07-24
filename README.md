@@ -1,10 +1,10 @@
 # Historical Climate Data Google Cloud Run Function
 
-[![CI](https://github.com/christianjbrown/php-gcp-function-historical-climate-data/actions/workflows/ci.yml/badge.svg)](https://github.com/christianjbrown/php-gcp-function-historical-climate-data/actions/workflows/ci.yml)
+[![CI](https://github.com/christianjbrown/cloud-run-function-historical-climate-data-php/actions/workflows/ci.yml/badge.svg)](https://github.com/christianjbrown/cloud-run-function-historical-climate-data-php/actions/workflows/ci.yml)
 
 A small [Google Cloud Run function](https://cloud.google.com/run) (PHP) that returns historical **min/max temperature and humidity** — inside (from [SmartThings](https://www.smartthings.com/)) and outside (from the [Met Office](https://datahub.metoffice.gov.uk/)) — aggregated per day or per hour over a lookback window, as a single JSON payload.
 
-The route you request picks a resolution and window (e.g. `/daily-3-month` for the last three months by day). For that window it runs one grouped `MIN`/`MAX` query per source table over the shared climate-history database, buckets the readings into **UTC** days (or hours), merges the inside and outside sides into one row per bucket, and returns them ordered earliest first. The heavy lifting — the aggregation SQL — lives in the shared `christianjbrown/php-christianbrown-database-orm` package's `ClimateHistoryReader`; this function parses the path, drives the reader against both tables, and merges the results.
+The route you request picks a resolution and window (e.g. `/daily-3-month` for the last three months by day). For that window it runs one grouped `MIN`/`MAX` query per source table over the shared climate-history database, buckets the readings into **UTC** days (or hours), merges the inside and outside sides into one row per bucket, and returns them ordered earliest first. The heavy lifting — the aggregation SQL — lives in the shared `christianjbrown/christianbrown-database-orm` package's `ClimateHistoryReader`; this function parses the path, drives the reader against both tables, and merges the results.
 
 
 
@@ -23,8 +23,8 @@ The route you request picks a resolution and window (e.g. `/daily-3-month` for t
 ## :building_construction: Installation
 
 ```bash
-git clone git@github.com:christianjbrown/php-gcp-function-historical-climate-data.git
-cd php-gcp-function-historical-climate-data
+git clone git@github.com:christianjbrown/cloud-run-function-historical-climate-data-php.git
+cd cloud-run-function-historical-climate-data
 composer install
 ```
 
@@ -152,7 +152,7 @@ composer fix-style-diff    # auto-fix changed files only
 
 The committed `openapi.yaml` is generated from the `#[OA\...]` attributes in `src/`
 (`composer openapi:generate`). The success response composes the shared `SuccessEnvelope` (from
-`php-gcp-function-lib`) with this function's `data` array of `ClimateHistoryBucket`s via `allOf`, and
+`cloud-run-function-lib`) with this function's `data` array of `ClimateHistoryBucket`s via `allOf`, and
 `tests/ContractTest.php` validates the function's real responses against the spec so the contract
 cannot silently drift from the code. Dev-only [Redoc](https://redocly.com/redoc) tooling
 (`@redocly/cli`) renders and lints it — it is separate from the PHP runtime and excluded from both git
@@ -172,7 +172,7 @@ npm run docs:lint      # lint openapi.yaml
 - **`.github/workflows/ci.yml`** runs on pushes and pull requests to `main`: `composer install`, PHPCS, PHPStan, PHPUnit, and an OpenAPI spec-drift check.
 - **`.github/workflows/deploy.yml`** runs on push to `main`: deploys the Cloud Run function (`php85` runtime, `europe-west2`, function name `get-historical-climate-data`) via Workload Identity Federation, grants public (`allUsers`) invoker access on the underlying Cloud Run service, attaches the shared Cloud SQL instance (`--set-cloudsql-instances`) so the climate-history tables are reachable, smoke-tests the deployed URL, then purges the Fastly edge cache by surrogate key.
 
-Both workflows install the private `christianjbrown/*` dependencies using a `COMPOSER_AUTH` repository secret — a Composer auth JSON containing a GitHub token with read access to those repos (here it **must** be able to read the private `php-christianbrown-database-orm` repo):
+Both workflows install the private `christianjbrown/*` dependencies using a `COMPOSER_AUTH` repository secret — a Composer auth JSON containing a GitHub token with read access to those repos (here it **must** be able to read the private `christianbrown-database-orm` repo):
 
 ```json
 {"github-oauth":{"github.com":"your-github-token"}}
@@ -187,12 +187,12 @@ The database DSN and the required-header value are supplied at deploy time from 
 The entry point is `run()` in [`index.php`](index.php), which wires the pieces together:
 
 - **`ConfigTransformer`** reads the environment into a `Config` (the database DSN + request/caching config), delegating the request-gating and caching env to the lib's `FunctionConfigTransformer`.
-- **`EntityManagerFactory`** / **`ClimateHistoryReader`** (from [`christianjbrown/php-christianbrown-database-orm`](https://github.com/christianjbrown/php-christianbrown-database-orm)) build a Doctrine entity manager over the DSN and run the grouped `MIN`/`MAX` aggregation query per table; the inside/outside table names come from the shared entity metadata, not string literals.
+- **`EntityManagerFactory`** / **`ClimateHistoryReader`** (from [`christianjbrown/christianbrown-database-orm`](https://github.com/christianjbrown/christianbrown-database-orm-php)) build a Doctrine entity manager over the DSN and run the grouped `MIN`/`MAX` aggregation query per table; the inside/outside table names come from the shared entity metadata, not string literals.
 - **`QueryParser`** / **`Query`** parse the request path into a resolution (`daily`/`hourly`) and lookback window; an unrecognised route throws a `UserFriendlyException` that becomes the JSON error envelope.
 - **`DataProvider`** derives the `[now - lookback, now)` UTC window, calls the reader once for the inside (`smartthings_climate`) table and once for the outside (`met_office_weather`) table, and hands both result sets to the `OutputTransformer`.
 - **`OutputTransformer`** merges the two sides by a chronologically-sortable bucket key so a plain sort yields earliest-first order, rounds every value to two decimals, and shapes the `data` array (a bucket present on one side only keeps `null` for the other side's fields).
 - **`RequestHandler`** wraps the factory wiring and `CloudFunction::run()` in one `try/catch`, returning the framework's JSON error envelope on any failure so a database problem never escapes as a bare 500.
-- **`CloudFunction`** (from [`christianjbrown/php-gcp-function-lib`](https://github.com/christianjbrown/php-gcp-function-lib)) handles the HTTP request/response, header/origin gating, and caching headers.
+- **`CloudFunction`** (from [`christianjbrown/cloud-run-function-lib`](https://github.com/christianjbrown/cloud-run-function-lib-php)) handles the HTTP request/response, header/origin gating, and caching headers.
 
 
 
