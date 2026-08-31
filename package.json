@@ -10,7 +10,7 @@
     "docs:lint": "redocly lint openapi.yaml"
   },
   "devDependencies": {
-    "@redocly/cli": "^1.34.17"
+    "@redocly/cli": "^2.49.0"
   },
   "overrides": {
     "js-yaml": "^4.3.0"
