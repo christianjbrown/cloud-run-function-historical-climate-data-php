@@ -101,13 +101,18 @@ use OpenApi\Attributes as OA;
             ),
         ),
         new OA\Response(
+            response: ResponseInterface::STATUS_BAD_REQUEST,
+            description: 'The path was not a recognised route. The error names the routes that are.',
+            content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope'),
+        ),
+        new OA\Response(
             response: ResponseInterface::STATUS_UNAUTHORIZED,
             description: 'The request failed header authorization.',
             content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope'),
         ),
         new OA\Response(
             response: ResponseInterface::STATUS_INTERNAL_SERVER_ERROR,
-            description: 'The path was not a recognised route, the database could not be reached, or an unhandled error occurred.',
+            description: 'The database could not be reached, or an unhandled error occurred.',
             content: new OA\JsonContent(ref: '#/components/schemas/ErrorEnvelope'),
         ),
     ],

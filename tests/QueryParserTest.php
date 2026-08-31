@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ChristianBrown\HistoricalClimateData\Tests;
 
+use ChristianBrown\CloudRunFunction\BadRequestException;
 use ChristianBrown\HistoricalClimateData\Query;
 use ChristianBrown\HistoricalClimateData\QueryParser;
 use ChristianBrown\HistoricalClimateData\QueryParserInterface;
-use ChristianBrown\UserFriendlyException\UserFriendlyException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -42,7 +42,7 @@ final class QueryParserTest extends TestCase
     #[TestWith(['/hourly-year'])]
     public function testParseRejectsInvalidPaths(string $path): void
     {
-        $this->expectException(UserFriendlyException::class);
+        $this->expectException(BadRequestException::class);
         $this->expectExceptionMessage(QueryParserInterface::ERROR_INVALID_PATH);
 
         (new QueryParser())->parse($path);

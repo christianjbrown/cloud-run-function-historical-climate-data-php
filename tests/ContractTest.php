@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ChristianBrown\HistoricalClimateData\Tests;
 
+use ChristianBrown\CloudRunFunction\BadRequestException;
 use ChristianBrown\CloudRunFunction\CloudRunFunction;
 use ChristianBrown\CloudRunFunction\DataProviderInterface as BaseDataProviderInterface;
 use ChristianBrown\CloudRunFunction\FunctionConfig;
@@ -13,7 +14,6 @@ use ChristianBrown\HistoricalClimateData\CloudRunFunctionFactoryInterface;
 use ChristianBrown\HistoricalClimateData\OutputTransformer;
 use ChristianBrown\HistoricalClimateData\QueryParserInterface;
 use ChristianBrown\HistoricalClimateData\RequestHandler;
-use ChristianBrown\UserFriendlyException\UserFriendlyException;
 use GuzzleHttp\Psr7\ServerRequest;
 use League\OpenAPIValidation\PSR7\OperationAddress;
 use League\OpenAPIValidation\PSR7\ResponseValidator;
@@ -56,12 +56,12 @@ final class ContractTest extends TestCase
     {
         $dataProvider = self::createStub(BaseDataProviderInterface::class);
         $dataProvider->method('getData')
-            ->willThrowException(new UserFriendlyException(QueryParserInterface::ERROR_INVALID_PATH));
+            ->willThrowException(new BadRequestException(QueryParserInterface::ERROR_INVALID_PATH));
 
         $response = $this->buildResponse($this->unauthenticatedConfig(), $dataProvider, new ServerRequest('GET', '/not-a-route'));
 
         $this->responseValidator->validate(new OperationAddress('/{route}', 'get'), $response);
-        self::assertSame(500, $response->getStatusCode());
+        self::assertSame(400, $response->getStatusCode());
     }
 
     /**
