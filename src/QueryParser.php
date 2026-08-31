@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ChristianBrown\HistoricalClimateData;
 
+use ChristianBrown\CloudRunFunction\BadRequestException;
 use ChristianBrown\Database\ClimateHistoryReaderInterface;
-use ChristianBrown\UserFriendlyException\UserFriendlyException;
 
 use function preg_match;
 
@@ -16,7 +16,7 @@ final class QueryParser implements QueryParserInterface
         // Grab the trailing route segment, tolerant of any route prefix
         // Fastly/Cloud Run may leave in front of it.
         if (1 !== preg_match('#(?:^|/)([a-z0-9-]+)$#', $path, $matches)) {
-            throw new UserFriendlyException(self::ERROR_INVALID_PATH);
+            throw new BadRequestException(self::ERROR_INVALID_PATH);
         }
 
         return self::resolveRoute($matches[1]);
@@ -35,7 +35,7 @@ final class QueryParser implements QueryParserInterface
             'daily-3-month' => new Query(ClimateHistoryReaderInterface::RESOLUTION_DAILY, 'P3M'),
             'daily-6-month' => new Query(ClimateHistoryReaderInterface::RESOLUTION_DAILY, 'P6M'),
             'daily-12-month' => new Query(ClimateHistoryReaderInterface::RESOLUTION_DAILY, 'P1Y'),
-            default => throw new UserFriendlyException(self::ERROR_INVALID_PATH),
+            default => throw new BadRequestException(self::ERROR_INVALID_PATH),
         };
     }
 }
