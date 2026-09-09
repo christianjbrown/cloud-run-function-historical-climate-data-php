@@ -65,8 +65,22 @@ jobs:
             --region='europe-west2' \
             --set-cloudsql-instances="${{ vars.GCP_CLOUD_SQL_INSTANCE }}"
 
+      # Smoke test the new revision against Cloud Run directly, not through the
+      # CDN: Fastly's stale-if-error would answer from the last good copy and
+      # hide a broken revision behind a 200.
+      #
+      # The request carries the same shared secret Fastly injects, because the
+      # function's auth gate answers 401 to everything without it. A bare `curl`
+      # here proved nothing twice over: it was always reading a 401, and it exits
+      # 0 on any HTTP status, so the step could not fail. --fail-with-body fixes
+      # the second half and prints the error envelope when it does fail.
       - name: 'Test Cloud Run function'
-        run: 'curl "${{ steps.deploy.outputs.url }}/daily-1-month"'
+        env:
+          REQUIRED_HEADER_VALUE: '${{ secrets.FASTLY_REQUIRED_HEADER_VALUE }}'
+        run: |
+          curl --fail-with-body --silent --show-error \
+            -H "X-Request-Auth: $REQUIRED_HEADER_VALUE" \
+            "${{ steps.deploy.outputs.url }}/daily-1-month"
 
       # Bust the Fastly edge cache so the new revision is served immediately.
       # Surrogate-key purge: the function emits `Surrogate-Key: <endpoint>` on
