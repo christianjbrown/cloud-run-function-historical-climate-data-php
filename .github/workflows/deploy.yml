@@ -9,6 +9,18 @@ on:
       - '.gitignore'
   workflow_dispatch:
 
+# Renovate merges arrive in bursts, and two pushes seconds apart started two
+# deploys that raced: the second took a 409 `unable to queue the operation`
+# from the functions API while the first was still in flight, and failed
+# without deploying anything. It happened three times in September 2026.
+# Queueing them removes the race. Deliberately not cancel-in-progress —
+# cancelling a run mid-deploy leaves the GCP operation running anyway and
+# skips the Fastly purge, so the edge would keep serving the old copy with
+# nothing left to fix it.
+concurrency:
+  group: 'deploy'
+  cancel-in-progress: false
+
 jobs:
   deploy:
     name: 'Deploy Cloud Run function'
@@ -55,15 +67,17 @@ jobs:
             --member='allUsers' \
             --role='roles/run.invoker'
 
-      # Attach the shared Cloud SQL instance (in the separate shared-data-services
-      # project) to this Gen2/Cloud Run service so the climate-history tables are
-      # reachable over the /cloudsql unix socket named in CHRISTIANBROWN_DATABASE_DSN.
-      # The runtime service account needs roles/cloudsql.client on that project.
-      - name: 'Connect Cloud SQL instance'
-        run: |
-          gcloud run services update "get-historical-climate-data" \
-            --region='europe-west2' \
-            --set-cloudsql-instances="${{ vars.GCP_CLOUD_SQL_INSTANCE }}"
+      # Nothing attaches Cloud SQL here, on purpose. The shared instance (in the
+      # separate shared-data-services project) is reached over the /cloudsql unix
+      # socket named in CHRISTIANBROWN_DATABASE_DSN, and the attachment is a
+      # property of the Cloud Run service that deploy-cloud-functions leaves
+      # alone: it is not in the action's updateMask, so every revision the action
+      # creates inherits it. A `gcloud run services update
+      # --set-cloudsql-instances` step used to run here and re-set it on every
+      # deploy. After the first attachment that was a no-op, and it cost a second
+      # revision and a second traffic shift every time: on 2026-09-22 the smoke
+      # test landed in that gap and took a 500 from Cloud Run's front door. The
+      # runtime service account still needs roles/cloudsql.client on that project.
 
       # Smoke test the new revision against Cloud Run directly, not through the
       # CDN: Fastly's stale-if-error would answer from the last good copy and
@@ -74,11 +88,18 @@ jobs:
       # here proved nothing twice over: it was always reading a 401, and it exits
       # 0 on any HTTP status, so the step could not fail. --fail-with-body fixes
       # the second half and prints the error envelope when it does fail.
+      #
+      # The retry rides out the rollout. A request arriving while Cloud Run is
+      # shifting traffic is refused at the front door before it reaches PHP, and
+      # with max_instance_count 1 there is no spare instance to absorb it. A
+      # single curl cannot tell that apart from a genuinely broken revision;
+      # retrying can.
       - name: 'Test Cloud Run function'
         env:
           REQUIRED_HEADER_VALUE: '${{ secrets.FASTLY_REQUIRED_HEADER_VALUE }}'
         run: |
           curl --fail-with-body --silent --show-error \
+            --retry 5 --retry-all-errors --retry-delay 5 \
             -H "X-Request-Auth: $REQUIRED_HEADER_VALUE" \
             "${{ steps.deploy.outputs.url }}/daily-1-month"
 
