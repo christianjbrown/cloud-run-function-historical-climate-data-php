@@ -21,15 +21,6 @@ jobs:
           php-version: '8.5'
           coverage: xdebug
 
-      # The runtime and dev dependencies are private `dev-main` packages on GitHub
-      # (including the private christianbrown-database-orm). Composer needs
-      # credentials to fetch them; supply a token with read access via the
-      # COMPOSER_AUTH secret.
-      - name: Configure Composer auth
-        run: echo "COMPOSER_AUTH=$COMPOSER_AUTH" >> "$GITHUB_ENV"
-        env:
-          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
-
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
