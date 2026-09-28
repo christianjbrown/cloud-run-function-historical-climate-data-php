@@ -1,6 +1,6 @@
 # Historical Climate Data Google Cloud Run Function
 
-[![CI](https://github.com/christianjbrown/cloud-run-function-historical-climate-data-php/actions/workflows/ci.yml/badge.svg)](https://github.com/christianjbrown/cloud-run-function-historical-climate-data-php/actions/workflows/ci.yml)
+[![CI](https://github.com/christianjbrown/cloud-run-function-historical-climate-data-php/actions/workflows/ci.yml/badge.svg)](https://github.com/christianjbrown/cloud-run-function-historical-climate-data-php/actions/workflows/ci.yml) [![License](https://img.shields.io/github/license/christianjbrown/cloud-run-function-historical-climate-data-php)](https://github.com/christianjbrown/cloud-run-function-historical-climate-data-php/blob/main/LICENSE) [![PHP](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fchristianjbrown%2Fcloud-run-function-historical-climate-data-php%2Fmain%2Fcomposer.json&query=%24.require.php&label=php&color=777BB4)](https://github.com/christianjbrown/cloud-run-function-historical-climate-data-php/blob/main/composer.json)
 
 A small [Google Cloud Run function](https://cloud.google.com/run) (PHP) that returns historical **min/max temperature and humidity** — inside (from [SmartThings](https://www.smartthings.com/)) and outside (from the [Met Office](https://datahub.metoffice.gov.uk/)) — aggregated per day or per hour over a lookback window, as a single JSON payload.
 
