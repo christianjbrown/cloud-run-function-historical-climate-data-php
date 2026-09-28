@@ -27,7 +27,7 @@
         "google/cloud-functions-framework": "^1.1"
     },
     "require-dev": {
-        "christianjbrown/code-quality-scripts": "dev-main",
+        "christianjbrown/code-quality-scripts": "^1.0",
         "league/openapi-psr7-validator": "^0.24.0",
         "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^13.0",
@@ -86,15 +86,7 @@
         },
         {
             "type": "github",
-            "url": "git@github.com:christianjbrown/code-quality-scripts-php.git"
-        },
-        {
-            "type": "github",
             "url": "git@github.com:christianjbrown/cloud-run-function-lib-php.git"
-        },
-        {
-            "type": "github",
-            "url": "git@github.com:christianjbrown/key-value-store-php.git"
         },
         {
             "type": "github",
