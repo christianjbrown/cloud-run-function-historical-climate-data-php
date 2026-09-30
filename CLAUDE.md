@@ -41,7 +41,7 @@ Binaries install into `bin/` (Composer `bin-dir`). Run `composer install` first;
 | Preview / build / lint the API docs | `npm install` then `npm run docs:preview` / `docs:build` / `docs:lint` |
 
 Always `composer fix-style`, then `check-style`, then `stan`, then `test` before finishing. CI
-(`.github/workflows/ci.yml`) runs the same three gates on push/PR to `main`; the `christianjbrown/*`
+(`.github/workflows/ci.yml`) runs the same three gates on push/PR to `main`, and fails if coverage drops below 100% on any metric; the `christianjbrown/*`
 dependencies are public, so it needs no credentials to install them (the `COMPOSER_AUTH` secret it
 still passes only lifts GitHub's API rate limit). The
 committed `openapi.yaml` is generated from the `#[OA\...]` attributes (`composer openapi:generate`) and
