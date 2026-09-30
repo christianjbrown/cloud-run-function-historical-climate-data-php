@@ -7,6 +7,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# The jobs only read the repository, so the token cannot write whatever the repo default is.
+permissions:
+  contents: read
+
 # Cancel a pull request's run when a newer push supersedes it; runs on main always finish.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
