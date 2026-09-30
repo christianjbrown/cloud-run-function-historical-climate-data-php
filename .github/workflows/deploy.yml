@@ -38,6 +38,21 @@ jobs:
           workload_identity_provider: 'projects/${{ vars.GCP_PROJECT_ID }}/locations/global/workloadIdentityPools/${{ vars.GCP_WIF_POOL }}/providers/${{ vars.GCP_WIF_PROVIDER }}'
           service_account: '${{ vars.GCP_SERVICE_ACCOUNT }}'
 
+      # Deploying a Cloud Run function sends all traffic to the new revision
+      # before the smoke test runs, and the functions API cannot deploy without
+      # traffic. So note what is serving now, and put traffic back on it if the
+      # smoke test fails. The next successful deploy moves traffic to its own
+      # revision as usual. On 2026-09-30 a broken SDK upgrade served 500s from
+      # the new revision until traffic was moved back by hand.
+      - name: 'Record the serving revision'
+        id: 'previous'
+        run: |
+          revision="$(gcloud run services describe "${{ vars.GCP_CLOUD_FUNCTION_ENDPOINT }}" \
+            --region='europe-west2' \
+            --format='value(status.traffic[0].revisionName)' 2>/dev/null || true)"
+          echo "Serving before deploy: ${revision:-none}"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+
       - name: 'Create or update Cloud Run function'
         id: 'deploy'
         uses: 'google-github-actions/deploy-cloud-functions@v4'
@@ -95,6 +110,7 @@ jobs:
       # single curl cannot tell that apart from a genuinely broken revision;
       # retrying can.
       - name: 'Test Cloud Run function'
+        id: 'smoke'
         env:
           REQUIRED_HEADER_VALUE: '${{ secrets.FASTLY_REQUIRED_HEADER_VALUE }}'
         run: |
@@ -116,3 +132,11 @@ jobs:
             -H "Fastly-Key: ${{ secrets.FASTLY_PURGE_API_KEY }}" \
             -H "Accept: application/json" \
             "https://api.fastly.com/service/${{ vars.FASTLY_SERVICE_ID }}/purge/${{ vars.GCP_CLOUD_FUNCTION_ENDPOINT }}"
+
+      - name: 'Roll back to the previous revision'
+        if: ${{ failure() && steps.smoke.outcome == 'failure' && steps.previous.outputs.revision != '' }}
+        run: |
+          gcloud run services update-traffic "${{ vars.GCP_CLOUD_FUNCTION_ENDPOINT }}" \
+            --region='europe-west2' \
+            --to-revisions="${{ steps.previous.outputs.revision }}=100"
+          echo "::error::The smoke test failed, so traffic is back on ${{ steps.previous.outputs.revision }}"
