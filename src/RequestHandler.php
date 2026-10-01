@@ -6,8 +6,8 @@ namespace ChristianBrown\HistoricalClimateData;
 
 use ChristianBrown\CloudRunFunction\CloudRunFunctionInterface;
 use ChristianBrown\CloudRunFunction\FunctionConfigInterface;
-use ChristianBrown\CloudRunFunction\JsonErrorResponse;
 use ChristianBrown\CloudRunFunction\JsonErrorResponseInterface;
+use ChristianBrown\CloudRunFunction\JsonResponseFactoryInterface;
 use ChristianBrown\CloudRunFunction\ResponseInterface as FunctionResponseInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -19,11 +19,13 @@ final class RequestHandler implements RequestHandlerInterface
 {
     private CloudRunFunctionFactoryInterface $cloudFunctionFactory;
     private FunctionConfigInterface $functionConfig;
+    private JsonResponseFactoryInterface $responseFactory;
 
-    public function __construct(CloudRunFunctionFactoryInterface $cloudFunctionFactory, FunctionConfigInterface $functionConfig)
+    public function __construct(CloudRunFunctionFactoryInterface $cloudFunctionFactory, FunctionConfigInterface $functionConfig, JsonResponseFactoryInterface $responseFactory)
     {
         $this->cloudFunctionFactory = $cloudFunctionFactory;
         $this->functionConfig = $functionConfig;
+        $this->responseFactory = $responseFactory;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -41,7 +43,7 @@ final class RequestHandler implements RequestHandlerInterface
             error_log((string) $exception);
             $requestOrigin = $request->getHeaderLine(FunctionResponseInterface::HEADER_KEY_ORIGIN);
 
-            return new JsonErrorResponse($this->functionConfig, CloudRunFunctionInterface::ERROR_UNHANDLED, JsonErrorResponseInterface::DEFAULT_ERROR_STATUS_CODE, $requestOrigin);
+            return $this->responseFactory->error($this->functionConfig, CloudRunFunctionInterface::ERROR_UNHANDLED, JsonErrorResponseInterface::DEFAULT_ERROR_STATUS_CODE, $requestOrigin);
         }
     }
 }

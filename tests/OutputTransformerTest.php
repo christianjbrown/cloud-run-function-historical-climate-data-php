@@ -5,11 +5,16 @@ declare(strict_types=1);
 namespace ChristianBrown\HistoricalClimateData\Tests;
 
 use ChristianBrown\Database\ClimateHistoryReaderInterface;
+use ChristianBrown\HistoricalClimateData\BucketKeyGenerator;
 use ChristianBrown\HistoricalClimateData\OutputTransformer;
+use ChristianBrown\HistoricalClimateData\TwoDecimalRounder;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(OutputTransformer::class)]
+#[UsesClass(BucketKeyGenerator::class)]
+#[UsesClass(TwoDecimalRounder::class)]
 final class OutputTransformerTest extends TestCase
 {
     public function testDailyMergesBothSidesOrdersByDateAndNullsMissingSides(): void
@@ -26,7 +31,7 @@ final class OutputTransformerTest extends TestCase
             ['date' => '2026-07-21', 'hour' => null, 'minTemperature' => 10.0, 'maxTemperature' => 20.0, 'minHumidity' => 60.0, 'maxHumidity' => 80.0],
         ];
 
-        $actual = (new OutputTransformer())->transform($inside, $outside, ClimateHistoryReaderInterface::RESOLUTION_DAILY);
+        $actual = (new OutputTransformer(new BucketKeyGenerator(), new TwoDecimalRounder()))->transform($inside, $outside, ClimateHistoryReaderInterface::RESOLUTION_DAILY);
 
         self::assertSame([
             ['date' => '2026-07-20', 'insideMaxTemp' => null, 'insideMinTemp' => null, 'insideMinHumidity' => 40.13, 'insideMaxHumidity' => 55.0, 'outsideMaxTemp' => null, 'outsideMinTemp' => null, 'outsideMinHumidity' => null, 'outsideMaxHumidity' => null],
@@ -44,7 +49,7 @@ final class OutputTransformerTest extends TestCase
             ['date' => '2026-07-20', 'hour' => 9, 'minTemperature' => 12.0, 'maxTemperature' => 14.0, 'minHumidity' => 70.0, 'maxHumidity' => 75.0],
         ];
 
-        $actual = (new OutputTransformer())->transform($inside, $outside, ClimateHistoryReaderInterface::RESOLUTION_HOURLY);
+        $actual = (new OutputTransformer(new BucketKeyGenerator(), new TwoDecimalRounder()))->transform($inside, $outside, ClimateHistoryReaderInterface::RESOLUTION_HOURLY);
 
         self::assertSame([
             ['date' => '2026-07-20', 'hour' => 9, 'insideMaxTemp' => null, 'insideMinTemp' => null, 'insideMinHumidity' => null, 'insideMaxHumidity' => null, 'outsideMaxTemp' => 14.0, 'outsideMinTemp' => 12.0, 'outsideMinHumidity' => 70.0, 'outsideMaxHumidity' => 75.0],

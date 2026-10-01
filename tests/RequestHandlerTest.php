@@ -6,14 +6,14 @@ namespace ChristianBrown\HistoricalClimateData\Tests;
 
 use ChristianBrown\CloudRunFunction\CloudRunFunctionInterface;
 use ChristianBrown\CloudRunFunction\FunctionConfigInterface;
-use ChristianBrown\CloudRunFunction\JsonErrorResponse;
 use ChristianBrown\CloudRunFunction\JsonErrorResponseInterface;
+use ChristianBrown\CloudRunFunction\JsonResponseFactoryInterface;
+use ChristianBrown\CloudRunFunction\ResponseInterface as FunctionResponseInterface;
 use ChristianBrown\HistoricalClimateData\CloudRunFunctionFactoryInterface;
 use ChristianBrown\HistoricalClimateData\RequestHandler;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
@@ -31,7 +31,7 @@ final class RequestHandlerTest extends TestCase
     public function testReturnsTheCloudRunFunctionResponseOnSuccess(): void
     {
         $request = self::createStub(ServerRequestInterface::class);
-        $expectedResponse = self::createStub(ResponseInterface::class);
+        $expectedResponse = self::createStub(FunctionResponseInterface::class);
 
         $cloudFunction = $this->createMock(CloudRunFunctionInterface::class);
         $cloudFunction->expects(self::once())
@@ -46,7 +46,7 @@ final class RequestHandlerTest extends TestCase
 
         $functionConfig = self::createStub(FunctionConfigInterface::class);
 
-        $requestHandler = new RequestHandler($cloudFunctionFactory, $functionConfig);
+        $requestHandler = new RequestHandler($cloudFunctionFactory, $functionConfig, self::createStub(JsonResponseFactoryInterface::class));
 
         self::assertSame($expectedResponse, $requestHandler->handle($request));
     }
@@ -67,7 +67,14 @@ final class RequestHandlerTest extends TestCase
 
         $functionConfig = self::createStub(FunctionConfigInterface::class);
 
-        $requestHandler = new RequestHandler($cloudFunctionFactory, $functionConfig);
+        $errorResponse = self::createStub(FunctionResponseInterface::class);
+        $responseFactory = self::createMock(JsonResponseFactoryInterface::class);
+        $responseFactory->expects(self::once())
+            ->method('error')
+            ->with($functionConfig, CloudRunFunctionInterface::ERROR_UNHANDLED, JsonErrorResponseInterface::DEFAULT_ERROR_STATUS_CODE)
+            ->willReturn($errorResponse);
+
+        $requestHandler = new RequestHandler($cloudFunctionFactory, $functionConfig, $responseFactory);
 
         // The handler logs the cause via error_log() for Cloud Logging; divert it to a
         // temp file so the strict-output check does not see it as unexpected output.
@@ -81,7 +88,6 @@ final class RequestHandlerTest extends TestCase
             unlink($errorLog);
         }
 
-        self::assertInstanceOf(JsonErrorResponse::class, $response);
-        self::assertSame(JsonErrorResponseInterface::DEFAULT_ERROR_STATUS_CODE, $response->getStatusCode());
+        self::assertSame($errorResponse, $response);
     }
 }
