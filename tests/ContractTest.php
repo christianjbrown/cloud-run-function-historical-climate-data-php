@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace ChristianBrown\HistoricalClimateData\Tests;
 
+use ChristianBrown\CloudRunFunction\AllowOriginResolver;
 use ChristianBrown\CloudRunFunction\BadRequestException;
-use ChristianBrown\CloudRunFunction\CloudRunFunction;
+use ChristianBrown\CloudRunFunction\CacheHeaderBuilder;
+use ChristianBrown\CloudRunFunction\CloudRunFunctionFactory;
+use ChristianBrown\CloudRunFunction\CorsHeaderBuilder;
 use ChristianBrown\CloudRunFunction\DataProviderInterface as BaseDataProviderInterface;
 use ChristianBrown\CloudRunFunction\FunctionConfig;
 use ChristianBrown\CloudRunFunction\FunctionConfigInterface;
+use ChristianBrown\CloudRunFunction\JsonResponseFactory;
+use ChristianBrown\CloudRunFunction\ResponseBodyBuilder;
 use ChristianBrown\Database\ClimateHistoryReaderInterface;
 use ChristianBrown\HistoricalClimateData\BucketKeyGenerator;
 use ChristianBrown\HistoricalClimateData\CloudRunFunctionFactoryInterface;
@@ -26,6 +31,7 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Clock\NativeClock;
 
 use function dirname;
 
@@ -123,8 +129,8 @@ final class ContractTest extends TestCase
     public function testUnauthorizedResponseMatchesContract(): void
     {
         $config = (new FunctionConfig(self::REVISION))
-            ->setRequiredHeaderKey('X-Request-Auth')
-            ->setRequiredHeaderValue('secret');
+            ->withRequiredHeaderKey('X-Request-Auth')
+            ->withRequiredHeaderValue('secret');
 
         $dataProvider = self::createStub(BaseDataProviderInterface::class);
 
@@ -154,13 +160,14 @@ final class ContractTest extends TestCase
      */
     private function buildResponse(FunctionConfigInterface $config, BaseDataProviderInterface $dataProvider, ServerRequestInterface $request): ResponseInterface
     {
-        $cloudFunction = new CloudRunFunction($dataProvider, $config);
+        $responseFactory = new JsonResponseFactory(new ResponseBodyBuilder(), new CorsHeaderBuilder(new AllowOriginResolver()), new CacheHeaderBuilder(), new NativeClock());
+        $cloudFunction = (new CloudRunFunctionFactory())->create($dataProvider, $config);
 
         $cloudFunctionFactory = self::createStub(CloudRunFunctionFactoryInterface::class);
         $cloudFunctionFactory->method('create')
             ->willReturn($cloudFunction);
 
-        $requestHandler = new RequestHandler($cloudFunctionFactory, $config);
+        $requestHandler = new RequestHandler($cloudFunctionFactory, $config, $responseFactory);
 
         return $requestHandler->handle($request);
     }
@@ -182,10 +189,10 @@ final class ContractTest extends TestCase
     private function unauthenticatedConfig(): FunctionConfigInterface
     {
         return (new FunctionConfig(self::REVISION))
-            ->setAllowUnauthenticated(true)
-            ->setRequiredOrigin(self::ORIGIN)
-            ->setUseCacheTtl(3600)
-            ->setUseCacheButRequestTtl(600)
-            ->setUseCacheIfErrorTtl(86400);
+            ->withAllowUnauthenticated(true)
+            ->withRequiredOrigin(self::ORIGIN)
+            ->withUseCacheTtl(3600)
+            ->withUseCacheButRequestTtl(600)
+            ->withUseCacheIfErrorTtl(86400);
     }
 }

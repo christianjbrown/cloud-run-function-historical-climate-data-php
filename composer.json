@@ -22,7 +22,7 @@
     "require": {
         "php": "^8.5",
         "christianjbrown/christianbrown-database-orm": "dev-main",
-        "christianjbrown/cloud-run-function-lib": "^1.0",
+        "christianjbrown/cloud-run-function-lib": "^2.0",
         "christianjbrown/user-friendly-exception": "^1.0",
         "google/cloud-functions-framework": "^1.1",
         "psr/clock": "^1.0",

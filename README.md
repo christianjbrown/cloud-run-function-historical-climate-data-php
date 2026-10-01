@@ -186,13 +186,13 @@ The database DSN and the required-header value are supplied at deploy time from 
 
 The entry point is `run()` in [`index.php`](index.php), which wires the pieces together:
 
-- **`ConfigTransformer`** reads the environment into a `Config` (the database DSN + request/caching config), delegating the request-gating and caching env to the lib's `FunctionConfigTransformer`.
-- **`EntityManagerFactory`** / **`ClimateHistoryReader`** (from [`christianjbrown/christianbrown-database-orm`](https://github.com/christianjbrown/christianbrown-database-orm-php)) build a Doctrine entity manager over the DSN and run the grouped `MIN`/`MAX` aggregation query per table; the inside/outside table names come from the shared entity metadata, not string literals.
+- **`ConfigTransformer`** reads the environment into a `Config` (the database DSN + request/caching config), delegating the request-gating and caching env to the lib's config transformer (from `CloudRunFunctionFactory::createConfigTransformer()`).
+- **`EntityManagerFactory`** / **`ClimateHistoryReaderFactory`** (from [`christianjbrown/christianbrown-database-orm`](https://github.com/christianjbrown/christianbrown-database-orm-php)) build a Doctrine entity manager over the DSN and run the grouped `MIN`/`MAX` aggregation query per table; the inside/outside table names come from the shared entity metadata, not string literals.
 - **`QueryParser`** / **`Query`** parse the request path into a resolution (`daily`/`hourly`) and lookback window, looking the route up in an injected `RouteRegistry` (the route map lives in `index.php`, so a new route is one more entry); an unrecognised route throws a `UserFriendlyException` that becomes the JSON error envelope.
 - **`DataProvider`** derives the `[now - lookback, now)` UTC window from an injected PSR-20 clock read on every request, calls the reader once for the inside (`smartthings_climate`) table and once for the outside (`met_office_weather`) table, and hands both result sets to the `OutputTransformer`.
 - **`OutputTransformer`** merges the two sides by a chronologically-sortable bucket key so a plain sort yields earliest-first order, rounds every value to two decimals (via the injected `BucketKeyGenerator` and `TwoDecimalRounder`), and shapes the `data` array (a bucket present on one side only keeps `null` for the other side's fields).
 - **`RequestHandler`** wraps the factory wiring and `CloudRunFunction::run()` in one `try/catch`, returning the framework's JSON error envelope on any failure so a database problem never escapes as a bare 500.
-- **`CloudRunFunction`** (from [`christianjbrown/cloud-run-function-lib`](https://github.com/christianjbrown/cloud-run-function-lib-php)) handles the HTTP request/response, header/origin gating, and caching headers.
+- **`CloudRunFunctionFactory`** builds the **`CloudRunFunction`** (from [`christianjbrown/cloud-run-function-lib`](https://github.com/christianjbrown/cloud-run-function-lib-php)) handles the HTTP request/response, header/origin gating, and caching headers.
 
 
 

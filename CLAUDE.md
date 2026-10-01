@@ -56,7 +56,7 @@ excluded from coverage/PHPStan/phpcs) is the composition root.
 - **`RequestHandler`** — wraps `factory->create()` + `CloudRunFunction::run()` in one `try/catch (Throwable)`,
   returning the framework's JSON error envelope on failure (identical to the sibling functions).
 - **`Config` / `ConfigTransformer`** — hold and validate `CHRISTIANBROWN_DATABASE_DSN` (via the shared
-  `extractRequiredString` guard), delegating the rest of the env to the lib's `FunctionConfigTransformer`.
+  `extractRequiredString` guard), delegating the rest of the env to the lib's config transformer (`CloudRunFunctionFactory::createConfigTransformer()`).
 - **`QueryParser` / `Query`** — parse `/{daily|hourly}-{month|6-month|year}` (tolerant of any route
   prefix) into a resolution + months-back; an unmatched path throws `UserFriendlyException`
   (`ERROR_INVALID_PATH`) → JSON error envelope. Period → months is a single `match` (not sequential
