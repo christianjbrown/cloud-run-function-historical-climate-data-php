@@ -12,6 +12,7 @@ use ChristianBrown\CloudRunFunction\CloudRunFunctionInterface;
 use ChristianBrown\CloudRunFunction\CorsHeaderBuilder;
 use ChristianBrown\CloudRunFunction\JsonResponseFactory;
 use ChristianBrown\CloudRunFunction\ResponseBodyBuilder;
+use ChristianBrown\Database\ClimateHistoryReaderInterface;
 use ChristianBrown\Database\ClimateHistoryReaderFactory;
 use ChristianBrown\Database\DbalClimateQueryRunner;
 use ChristianBrown\Database\Entity\MetOfficeWeather;
@@ -44,7 +45,7 @@ function run(ServerRequestInterface $request): ResponseInterface
     // here) so that RequestHandler::handle() wraps it in the same try/catch as
     // CloudRunFunction::run() and a failure there returns the framework's JSON error
     // envelope rather than escaping as a bare 500.
-    $cloudFunctionFactory = new class($config) implements CloudRunFunctionFactoryInterface
+    $cloudFunctionFactory = new class($config, $libraryFactory) implements CloudRunFunctionFactoryInterface
     {
         private ConfigInterface $config;
         private LibraryCloudRunFunctionFactoryInterface $libraryFactory;

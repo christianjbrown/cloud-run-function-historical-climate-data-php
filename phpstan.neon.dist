@@ -4,5 +4,6 @@ includes:
 parameters:
     tmpDir: .phpstan.cache
     paths:
+        - index.php
         - src
         - tests
