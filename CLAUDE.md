@@ -11,10 +11,10 @@ min/max temperature and humidity — inside from SmartThings, outside from the M
 lookback window. It is an **application, not a library**: `run()` in `index.php` is the composition
 root that wires the sibling `christianjbrown/*` packages behind one HTTP entry point.
 
-It consumes the `dev-main` packages `cloud-run-function-lib` (the HTTP envelope/gating/caching
-framework), `christianbrown-database-orm` (the shared Doctrine ORM — entities, `EntityManagerFactory`,
-and the `ClimateHistoryReader` that owns the aggregation SQL), and `user-friendly-exception`,
-plus `code-quality-scripts` (dev). The **read/aggregation logic lives in the shared ORM package**,
+It consumes `cloud-run-function-lib` (the HTTP envelope/gating/caching framework) and
+`user-friendly-exception` from Packagist, `christianbrown-database-orm` (the shared Doctrine ORM:
+entities, `EntityManagerFactory`, and the `ClimateHistoryReader` that owns the aggregation SQL) as a
+`dev-main` GitHub package, plus `code-quality-scripts` (dev). The **read/aggregation logic lives in the shared ORM package**,
 not here — this function only parses the path, drives the reader against both tables, and merges.
 
 ## The endpoint
