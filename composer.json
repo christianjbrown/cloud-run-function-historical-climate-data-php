@@ -22,8 +22,8 @@
     "require": {
         "php": "^8.5",
         "christianjbrown/christianbrown-database-orm": "dev-main",
-        "christianjbrown/cloud-run-function-lib": "dev-main",
-        "christianjbrown/user-friendly-exception": "dev-main",
+        "christianjbrown/cloud-run-function-lib": "^1.0",
+        "christianjbrown/user-friendly-exception": "^1.0",
         "google/cloud-functions-framework": "^1.1"
     },
     "require-dev": {
@@ -83,14 +83,6 @@
         {
             "type": "github",
             "url": "git@github.com:christianjbrown/christianbrown-database-orm-php.git"
-        },
-        {
-            "type": "github",
-            "url": "git@github.com:christianjbrown/cloud-run-function-lib-php.git"
-        },
-        {
-            "type": "github",
-            "url": "git@github.com:christianjbrown/user-friendly-exception-php.git"
         }
     ]
 }

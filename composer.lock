@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d927f9cabb1bb81a50c53894a5c26f57",
+    "content-hash": "3f41fc4410bfea6a30fa93328c69a405",
     "packages": [
         {
             "name": "brick/math",
@@ -147,20 +147,20 @@
         },
         {
             "name": "christianjbrown/cloud-run-function-lib",
-            "version": "dev-main",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/christianjbrown/cloud-run-function-lib-php.git",
-                "reference": "2674445ce5815c340f78cffb8744ef82e81d90cc"
+                "reference": "ca049a0a0912500ddc9330c01e795129a6d829e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/christianjbrown/cloud-run-function-lib-php/zipball/2674445ce5815c340f78cffb8744ef82e81d90cc",
-                "reference": "2674445ce5815c340f78cffb8744ef82e81d90cc",
+                "url": "https://api.github.com/repos/christianjbrown/cloud-run-function-lib-php/zipball/ca049a0a0912500ddc9330c01e795129a6d829e6",
+                "reference": "ca049a0a0912500ddc9330c01e795129a6d829e6",
                 "shasum": ""
             },
             "require": {
-                "christianjbrown/user-friendly-exception": "dev-main",
+                "christianjbrown/user-friendly-exception": "^1.0",
                 "guzzlehttp/guzzle": "^7.15",
                 "php": "^8.5"
             },
@@ -171,38 +171,13 @@
                 "phpunit/phpunit": "^13.0",
                 "zircote/swagger-php": "^6.4"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "ChristianBrown\\CloudRunFunction\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "ChristianBrown\\CloudRunFunction\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "clear && XDEBUG_MODE=coverage php -d memory_limit=-1 ./bin/phpunit && open ./.phpunit.cache/code-coverage-html/index.html"
-                ],
-                "stan": [
-                    "clear && ./bin/phpstan analyse"
-                ],
-                "check-style": [
-                    "clear && ./bin/php-cs ./src ./tests"
-                ],
-                "check-style-diff": [
-                    "clear && ./bin/php-cs-diff"
-                ],
-                "fix-style": [
-                    "clear && ./bin/php-cs-fix ./src ./tests"
-                ],
-                "fix-style-diff": [
-                    "clear && ./bin/php-cs-fix-diff"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -213,17 +188,17 @@
             ],
             "description": "A strongly-typed PHP 8.5+ framework for building Google Cloud Run functions HTTP endpoints that return a consistent JSON envelope with built-in header auth, CORS, and CDN cache-control headers.",
             "keywords": [
+                "JSON-API",
                 "cloud-functions",
                 "cloud-run",
                 "google-cloud",
-                "json-api",
                 "psr-7",
                 "serverless"
             ],
             "support": {
-                "source": "https://github.com/christianjbrown/cloud-run-function-lib-php/tree/main"
+                "source": "https://github.com/christianjbrown/cloud-run-function-lib-php/tree/v1.0.0"
             },
-            "time": "2026-09-28T12:20:19+00:00"
+            "time": "2026-10-01T00:10:09+00:00"
         },
         {
             "name": "christianjbrown/key-value-store",
@@ -287,16 +262,16 @@
         },
         {
             "name": "christianjbrown/user-friendly-exception",
-            "version": "dev-main",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/christianjbrown/user-friendly-exception-php.git",
-                "reference": "8428d8c34444aedfa02855e2de3fcbbab07d2716"
+                "reference": "eb1371420b2c38d32f541fa4018dbddb3be8115f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/christianjbrown/user-friendly-exception-php/zipball/8428d8c34444aedfa02855e2de3fcbbab07d2716",
-                "reference": "8428d8c34444aedfa02855e2de3fcbbab07d2716",
+                "url": "https://api.github.com/repos/christianjbrown/user-friendly-exception-php/zipball/eb1371420b2c38d32f541fa4018dbddb3be8115f",
+                "reference": "eb1371420b2c38d32f541fa4018dbddb3be8115f",
                 "shasum": ""
             },
             "require": {
@@ -307,38 +282,13 @@
                 "phpstan/phpstan": "^2.0",
                 "phpunit/phpunit": "^13.0"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "ChristianBrown\\UserFriendlyException\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "ChristianBrown\\UserFriendlyException\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "clear && XDEBUG_MODE=coverage php -d memory_limit=-1 ./bin/phpunit && open ./.phpunit.cache/code-coverage-html/index.html"
-                ],
-                "stan": [
-                    "clear && ./bin/phpstan analyse"
-                ],
-                "check-style": [
-                    "clear && ./bin/php-cs ./src ./tests"
-                ],
-                "check-style-diff": [
-                    "clear && ./bin/php-cs-diff"
-                ],
-                "fix-style": [
-                    "clear && ./bin/php-cs-fix ./src ./tests"
-                ],
-                "fix-style-diff": [
-                    "clear && ./bin/php-cs-fix-diff"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -354,9 +304,9 @@
                 "user-friendly"
             ],
             "support": {
-                "source": "https://github.com/christianjbrown/user-friendly-exception-php/tree/main"
+                "source": "https://github.com/christianjbrown/user-friendly-exception-php/tree/v1.0.0"
             },
-            "time": "2026-09-28T12:18:29+00:00"
+            "time": "2026-10-01T00:03:50+00:00"
         },
         {
             "name": "cloudevents/sdk-php",
@@ -9117,9 +9067,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "christianjbrown/christianbrown-database-orm": 20,
-        "christianjbrown/cloud-run-function-lib": 20,
-        "christianjbrown/user-friendly-exception": 20
+        "christianjbrown/christianbrown-database-orm": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

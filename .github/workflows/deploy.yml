@@ -1,12 +1,14 @@
 name: Deploy
 
+# Deploy only what CI has passed. A push to main runs CI, and this workflow
+# starts when that run finishes; the jobs below go ahead only if it succeeded.
+# workflow_run has no paths filter, so the changes job does the job the old
+# paths-ignore did and skips commits that touch nothing but docs.
 on:
-  push:
+  workflow_run:
+    workflows: ['CI']
+    types: ['completed']
     branches: ['main']
-    paths-ignore:
-      - '**.md'
-      - 'LICENSE'
-      - '.gitignore'
   workflow_dispatch:
 
 # Renovate merges arrive in bursts, and two pushes seconds apart started two
@@ -22,18 +24,53 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  changes:
+    name: 'Check CI passed and what changed'
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push') }}
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: 'read'
+    outputs:
+      deploy: ${{ steps.diff.outputs.deploy }}
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 2
+
+      # main is squash-merged, so the tested commit holds the whole change.
+      - name: 'Skip commits that only touch docs'
+        id: 'diff'
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = 'workflow_dispatch' ]; then
+            echo 'deploy=true' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          changed="$(git diff --name-only HEAD^ HEAD | grep -vE '\.md$|^LICENSE$|^\.gitignore$' || true)"
+          if [ -n "$changed" ]; then
+            echo 'deploy=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'Only docs changed, nothing to deploy.'
+            echo 'deploy=false' >> "$GITHUB_OUTPUT"
+          fi
+
   deploy:
     name: 'Deploy Cloud Run function'
+    needs: 'changes'
+    if: ${{ needs.changes.outputs.deploy == 'true' }}
     runs-on: 'ubuntu-latest'
     permissions:
       contents: 'read'
       id-token: 'write'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v7'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: 'Authenticate with GCP'
-        uses: 'google-github-actions/auth@v3'
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: 'projects/${{ vars.GCP_PROJECT_ID }}/locations/global/workloadIdentityPools/${{ vars.GCP_WIF_POOL }}/providers/${{ vars.GCP_WIF_PROVIDER }}'
           service_account: '${{ vars.GCP_SERVICE_ACCOUNT }}'
@@ -55,7 +92,7 @@ jobs:
 
       - name: 'Create or update Cloud Run function'
         id: 'deploy'
-        uses: 'google-github-actions/deploy-cloud-functions@v4'
+        uses: google-github-actions/deploy-cloud-functions@ab10d6b9be21630aafc15ced4c464c16cd6640d6 # v4.0.0
         with:
           name: 'get-historical-climate-data'
           runtime: 'php85'

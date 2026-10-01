@@ -7,16 +7,25 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# The jobs only read the repository, so the token cannot write whatever the repo default is.
+permissions:
+  contents: read
+
+# Cancel a pull request's run when a newer push supersedes it; runs on main always finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: '8.5'
           coverage: xdebug
@@ -31,7 +40,10 @@ jobs:
         run: ./bin/phpstan analyse --no-progress
 
       - name: Run tests with coverage
-        run: XDEBUG_MODE=coverage php -d memory_limit=-1 ./bin/phpunit
+        run: XDEBUG_MODE=coverage php -d memory_limit=-1 ./bin/phpunit --coverage-text=.phpunit.cache/coverage.txt
+
+      - name: Enforce 100% coverage
+        run: ./bin/php-coverage-check .phpunit.cache/coverage.txt
 
       # The committed openapi.yaml is generated from the `#[OA\...]` attributes in
       # src/. Regenerate it and fail if it differs from what is committed, so an
