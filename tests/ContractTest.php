@@ -10,10 +10,12 @@ use ChristianBrown\CloudRunFunction\DataProviderInterface as BaseDataProviderInt
 use ChristianBrown\CloudRunFunction\FunctionConfig;
 use ChristianBrown\CloudRunFunction\FunctionConfigInterface;
 use ChristianBrown\Database\ClimateHistoryReaderInterface;
+use ChristianBrown\HistoricalClimateData\BucketKeyGenerator;
 use ChristianBrown\HistoricalClimateData\CloudRunFunctionFactoryInterface;
 use ChristianBrown\HistoricalClimateData\OutputTransformer;
 use ChristianBrown\HistoricalClimateData\QueryParserInterface;
 use ChristianBrown\HistoricalClimateData\RequestHandler;
+use ChristianBrown\HistoricalClimateData\TwoDecimalRounder;
 use GuzzleHttp\Psr7\ServerRequest;
 use League\OpenAPIValidation\PSR7\OperationAddress;
 use League\OpenAPIValidation\PSR7\ResponseValidator;
@@ -35,6 +37,8 @@ use function dirname;
  */
 #[CoversClass(RequestHandler::class)]
 #[UsesClass(OutputTransformer::class)]
+#[UsesClass(BucketKeyGenerator::class)]
+#[UsesClass(TwoDecimalRounder::class)]
 final class ContractTest extends TestCase
 {
     private const string ORIGIN = 'https://example.com';
@@ -76,7 +80,7 @@ final class ContractTest extends TestCase
         // Only the first day is present outside, so 2026-07-20 keeps null outside fields.
         $outside = [self::bucket('2026-07-19', null, 11.8, 22.6, 44.0, 89.0)];
 
-        $data = (new OutputTransformer())->transform($inside, $outside, ClimateHistoryReaderInterface::RESOLUTION_DAILY);
+        $data = (new OutputTransformer(new BucketKeyGenerator(), new TwoDecimalRounder()))->transform($inside, $outside, ClimateHistoryReaderInterface::RESOLUTION_DAILY);
 
         $response = $this->buildResponse($this->unauthenticatedConfig(), $this->dataProvider($data), new ServerRequest('GET', self::ROUTE, ['Origin' => self::ORIGIN]));
 
@@ -89,7 +93,7 @@ final class ContractTest extends TestCase
      */
     public function testSuccessEmptyPayloadMatchesContract(): void
     {
-        $data = (new OutputTransformer())->transform([], [], ClimateHistoryReaderInterface::RESOLUTION_DAILY);
+        $data = (new OutputTransformer(new BucketKeyGenerator(), new TwoDecimalRounder()))->transform([], [], ClimateHistoryReaderInterface::RESOLUTION_DAILY);
 
         $response = $this->buildResponse($this->unauthenticatedConfig(), $this->dataProvider($data), new ServerRequest('GET', self::ROUTE));
 
@@ -105,7 +109,7 @@ final class ContractTest extends TestCase
         $inside = [self::bucket('2026-07-20', 14, 22.4, 23.9, 45.0, 52.0)];
         $outside = [self::bucket('2026-07-20', 14, 18.0, 21.0, 40.0, 70.0)];
 
-        $data = (new OutputTransformer())->transform($inside, $outside, ClimateHistoryReaderInterface::RESOLUTION_HOURLY);
+        $data = (new OutputTransformer(new BucketKeyGenerator(), new TwoDecimalRounder()))->transform($inside, $outside, ClimateHistoryReaderInterface::RESOLUTION_HOURLY);
 
         $response = $this->buildResponse($this->unauthenticatedConfig(), $this->dataProvider($data), new ServerRequest('GET', '/hourly-day', ['Origin' => self::ORIGIN]));
 

@@ -24,7 +24,9 @@
         "christianjbrown/christianbrown-database-orm": "dev-main",
         "christianjbrown/cloud-run-function-lib": "^1.0",
         "christianjbrown/user-friendly-exception": "^1.0",
-        "google/cloud-functions-framework": "^1.1"
+        "google/cloud-functions-framework": "^1.1",
+        "psr/clock": "^1.0",
+        "symfony/clock": "^8.1"
     },
     "require-dev": {
         "christianjbrown/code-quality-scripts": "^1.0",

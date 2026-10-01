@@ -13,15 +13,22 @@ use function array_merge;
 use function array_unique;
 use function array_values;
 use function mb_substr;
-use function round;
 use function sort;
-use function sprintf;
 
 /**
  * @phpstan-import-type ClimateBucket from OutputTransformerInterface
  */
 final class OutputTransformer implements OutputTransformerInterface
 {
+    private BucketKeyGeneratorInterface $bucketKeyGenerator;
+    private ValueRounderInterface $rounder;
+
+    public function __construct(BucketKeyGeneratorInterface $bucketKeyGenerator, ValueRounderInterface $rounder)
+    {
+        $this->bucketKeyGenerator = $bucketKeyGenerator;
+        $this->rounder = $rounder;
+    }
+
     /**
      * @param list<ClimateBucket> $inside
      * @param list<ClimateBucket> $outside
@@ -30,8 +37,8 @@ final class OutputTransformer implements OutputTransformerInterface
      */
     public function transform(array $inside, array $outside, string $resolution): array
     {
-        $insideByKey = self::indexByBucketKey($inside, $resolution);
-        $outsideByKey = self::indexByBucketKey($outside, $resolution);
+        $insideByKey = $this->indexByBucketKey($inside, $resolution);
+        $outsideByKey = $this->indexByBucketKey($outside, $resolution);
 
         // A chronologically-sortable key ('YYYY-MM-DD' or 'YYYY-MM-DDTHH') means a
         // plain string sort of the union yields the required earliest-first order.
@@ -39,21 +46,9 @@ final class OutputTransformer implements OutputTransformerInterface
         sort($keys);
 
         return array_map(
-            static fn (string $key): array => self::buildRow($insideByKey[$key] ?? null, $outsideByKey[$key] ?? null, $key, $resolution),
+            fn (string $key): array => $this->buildRow($insideByKey[$key] ?? null, $outsideByKey[$key] ?? null, $key, $resolution),
             $keys
         );
-    }
-
-    /**
-     * @param ClimateBucket $bucket
-     */
-    private static function bucketKey(array $bucket, string $resolution): string
-    {
-        if (ClimateHistoryReaderInterface::RESOLUTION_HOURLY === $resolution) {
-            return sprintf('%sT%02d', $bucket['date'], (int) $bucket['hour']);
-        }
-
-        return $bucket['date'];
     }
 
     /**
@@ -62,7 +57,7 @@ final class OutputTransformer implements OutputTransformerInterface
      *
      * @return mixed[]
      */
-    private static function buildRow(?array $inside, ?array $outside, string $key, string $resolution): array
+    private function buildRow(?array $inside, ?array $outside, string $key, string $resolution): array
     {
         // The date (and hour) come from the sortable key, so no reference bucket is
         // needed when only one side is present.
@@ -73,7 +68,7 @@ final class OutputTransformer implements OutputTransformerInterface
 
         // `+` preserves insertion order, giving the fixed date[, hour], inside*,
         // outside* field order.
-        return $row + self::side($inside, 'inside') + self::side($outside, 'outside');
+        return $row + $this->side($inside, 'inside') + $this->side($outside, 'outside');
     }
 
     /**
@@ -81,19 +76,14 @@ final class OutputTransformer implements OutputTransformerInterface
      *
      * @return array<string, ClimateBucket>
      */
-    private static function indexByBucketKey(array $buckets, string $resolution): array
+    private function indexByBucketKey(array $buckets, string $resolution): array
     {
         $keys = array_map(
-            static fn (array $bucket): string => self::bucketKey($bucket, $resolution),
+            fn (array $bucket): string => $this->bucketKeyGenerator->generate($bucket, $resolution),
             $buckets
         );
 
         return array_combine($keys, $buckets);
-    }
-
-    private static function round2(?float $value): ?float
-    {
-        return null === $value ? null : round($value, 2);
     }
 
     /**
@@ -102,7 +92,7 @@ final class OutputTransformer implements OutputTransformerInterface
      *
      * @return array<string, null|float>
      */
-    private static function side(?array $bucket, string $prefix): array
+    private function side(?array $bucket, string $prefix): array
     {
         // Branch once (not per field) so a missing side is a single path — four
         // independent ternaries would explode the path-coverage combinations.
@@ -116,10 +106,10 @@ final class OutputTransformer implements OutputTransformerInterface
         }
 
         return [
-            $prefix.'MaxTemp' => self::round2($bucket['maxTemperature']),
-            $prefix.'MinTemp' => self::round2($bucket['minTemperature']),
-            $prefix.'MinHumidity' => self::round2($bucket['minHumidity']),
-            $prefix.'MaxHumidity' => self::round2($bucket['maxHumidity']),
+            $prefix.'MaxTemp' => $this->rounder->round($bucket['maxTemperature']),
+            $prefix.'MinTemp' => $this->rounder->round($bucket['minTemperature']),
+            $prefix.'MinHumidity' => $this->rounder->round($bucket['minHumidity']),
+            $prefix.'MaxHumidity' => $this->rounder->round($bucket['maxHumidity']),
         ];
     }
 }
