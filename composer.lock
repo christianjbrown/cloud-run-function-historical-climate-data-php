@@ -264,16 +264,16 @@
         },
         {
             "name": "christianjbrown/user-friendly-exception",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/christianjbrown/user-friendly-exception-php.git",
-                "reference": "eb1371420b2c38d32f541fa4018dbddb3be8115f"
+                "reference": "375443384f4a22b6afc6986c4afd9f67c04aa761"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/christianjbrown/user-friendly-exception-php/zipball/eb1371420b2c38d32f541fa4018dbddb3be8115f",
-                "reference": "eb1371420b2c38d32f541fa4018dbddb3be8115f",
+                "url": "https://api.github.com/repos/christianjbrown/user-friendly-exception-php/zipball/375443384f4a22b6afc6986c4afd9f67c04aa761",
+                "reference": "375443384f4a22b6afc6986c4afd9f67c04aa761",
                 "shasum": ""
             },
             "require": {
@@ -306,9 +306,9 @@
                 "user-friendly"
             ],
             "support": {
-                "source": "https://github.com/christianjbrown/user-friendly-exception-php/tree/v1.0.0"
+                "source": "https://github.com/christianjbrown/user-friendly-exception-php/tree/v1.0.1"
             },
-            "time": "2026-10-01T00:03:50+00:00"
+            "time": "2026-10-01T11:29:38+00:00"
         },
         {
             "name": "cloudevents/sdk-php",
