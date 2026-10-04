@@ -147,16 +147,16 @@
         },
         {
             "name": "christianjbrown/cloud-run-function-lib",
-            "version": "v2.0.0",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/christianjbrown/cloud-run-function-lib-php.git",
-                "reference": "f3e72d59d2017bc8012c1b0626d14a0f0b51216b"
+                "reference": "12020750fa85109b82c03a7bd33c5a621ba09f7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/christianjbrown/cloud-run-function-lib-php/zipball/f3e72d59d2017bc8012c1b0626d14a0f0b51216b",
-                "reference": "f3e72d59d2017bc8012c1b0626d14a0f0b51216b",
+                "url": "https://api.github.com/repos/christianjbrown/cloud-run-function-lib-php/zipball/12020750fa85109b82c03a7bd33c5a621ba09f7c",
+                "reference": "12020750fa85109b82c03a7bd33c5a621ba09f7c",
                 "shasum": ""
             },
             "require": {
@@ -198,9 +198,9 @@
                 "serverless"
             ],
             "support": {
-                "source": "https://github.com/christianjbrown/cloud-run-function-lib-php/tree/v2.0.0"
+                "source": "https://github.com/christianjbrown/cloud-run-function-lib-php/tree/v2.0.1"
             },
-            "time": "2026-10-01T00:51:36+00:00"
+            "time": "2026-10-01T11:29:59+00:00"
         },
         {
             "name": "christianjbrown/key-value-store",
