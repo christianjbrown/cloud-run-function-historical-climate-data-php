@@ -3907,16 +3907,16 @@
     "packages-dev": [
         {
             "name": "christianjbrown/code-quality-scripts",
-            "version": "v1.0.0",
+            "version": "v1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/christianjbrown/code-quality-scripts-php.git",
-                "reference": "00346e9dbe250a466a19324dc1da0b1f9a084d58"
+                "reference": "9b2bcdba22f8424f11e40c60edf40fa5404d86cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/christianjbrown/code-quality-scripts-php/zipball/00346e9dbe250a466a19324dc1da0b1f9a084d58",
-                "reference": "00346e9dbe250a466a19324dc1da0b1f9a084d58",
+                "url": "https://api.github.com/repos/christianjbrown/code-quality-scripts-php/zipball/9b2bcdba22f8424f11e40c60edf40fa5404d86cd",
+                "reference": "9b2bcdba22f8424f11e40c60edf40fa5404d86cd",
                 "shasum": ""
             },
             "require": {
@@ -3937,13 +3937,16 @@
                 "src/php-cs-diff",
                 "src/php-cs-fix",
                 "src/php-cs-fix-diff",
-                "src/php-coverage-check"
+                "src/php-coverage-check",
+                "src/php-changelog-check"
             ],
             "type": "library",
             "autoload": {
                 "psr-4": {
+                    "ChristianBrown\\CodeQualityScripts\\Console\\": "src/Console/",
                     "ChristianBrown\\CodeQualityScripts\\PhpStan\\": "src/PhpStan/",
-                    "ChristianBrown\\CodeQualityScripts\\Coverage\\": "src/Coverage/"
+                    "ChristianBrown\\CodeQualityScripts\\Coverage\\": "src/Coverage/",
+                    "ChristianBrown\\CodeQualityScripts\\Changelog\\": "src/Changelog/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3964,9 +3967,10 @@
                 "static-analysis"
             ],
             "support": {
-                "source": "https://github.com/christianjbrown/code-quality-scripts-php/tree/v1.0.0"
+                "issues": "https://github.com/christianjbrown/code-quality-scripts-php/issues",
+                "source": "https://github.com/christianjbrown/code-quality-scripts-php/tree/v1.2.1"
             },
-            "time": "2026-09-28T11:08:11+00:00"
+            "time": "2026-10-01T11:30:00+00:00"
         },
         {
             "name": "clue/ndjson-react",
