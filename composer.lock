@@ -9106,16 +9106,16 @@
         },
         {
             "name": "zircote/swagger-php",
-            "version": "6.4.0",
+            "version": "6.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zircote/swagger-php.git",
-                "reference": "d2006242dae81ae8833ad9a0ffb74e3254654cff"
+                "reference": "f7c0fc65cb9cdb84bdf0e4e21460d348888b41a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/d2006242dae81ae8833ad9a0ffb74e3254654cff",
-                "reference": "d2006242dae81ae8833ad9a0ffb74e3254654cff",
+                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/f7c0fc65cb9cdb84bdf0e4e21460d348888b41a2",
+                "reference": "f7c0fc65cb9cdb84bdf0e4e21460d348888b41a2",
                 "shasum": ""
             },
             "require": {
@@ -9124,7 +9124,7 @@
                 "phpstan/phpdoc-parser": "^2.0",
                 "psr/log": "^1.1 || ^2.0 || ^3.0",
                 "radebatz/type-info-extras": "^1.0.2",
-                "symfony/console": "^7.4 || ^8.0",
+                "symfony/console": "^6.4 || ^7.0 || ^8.0",
                 "symfony/deprecation-contracts": "^2 || ^3",
                 "symfony/finder": "^5.0 || ^6.0 || ^7.0 || ^8.0",
                 "symfony/yaml": "^5.4 || ^6.0 || ^7.0 || ^8.0"
@@ -9134,10 +9134,10 @@
             },
             "require-dev": {
                 "doctrine/annotations": "^2.0",
-                "friendsofphp/php-cs-fixer": "^3.62.0",
-                "phpstan/phpstan": "^2.0",
+                "friendsofphp/php-cs-fixer": "3.95.23",
+                "phpstan/phpstan": "2.2.12",
                 "phpunit/phpunit": "^11.5 || >=12.5.22",
-                "rector/rector": "^2.3.1"
+                "rector/rector": "2.6.5"
             },
             "bin": [
                 "bin/openapi"
@@ -9183,7 +9183,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zircote/swagger-php/issues",
-                "source": "https://github.com/zircote/swagger-php/tree/6.4.0"
+                "source": "https://github.com/zircote/swagger-php/tree/6.12.0"
             },
             "funding": [
                 {
@@ -9191,7 +9191,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-07-12T03:44:54+00:00"
+            "time": "2026-10-06T03:39:01+00:00"
         }
     ],
     "aliases": [],
