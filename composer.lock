@@ -9026,16 +9026,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v8.1.10",
+            "version": "v8.1.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "9de4ff9874dd18b738b9f248398c3e36ef15a1d2"
+                "reference": "e8266f55160f674f290a5f567cb55e11e21f921b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/9de4ff9874dd18b738b9f248398c3e36ef15a1d2",
-                "reference": "9de4ff9874dd18b738b9f248398c3e36ef15a1d2",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/e8266f55160f674f290a5f567cb55e11e21f921b",
+                "reference": "e8266f55160f674f290a5f567cb55e11e21f921b",
                 "shasum": ""
             },
             "require": {
@@ -9078,7 +9078,7 @@
             "description": "Loads and dumps YAML files",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/yaml/tree/v8.1.10"
+                "source": "https://github.com/symfony/yaml/tree/v8.1.11"
             },
             "funding": [
                 {
@@ -9098,8 +9098,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-18T14:56:39+00:00",
-            "published-time": "2026-10-28T18:23:45+00:00"
+            "time": "2026-11-04T08:39:20+00:00",
+            "published-time": "2026-11-04T11:31:03+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -9170,16 +9170,16 @@
         },
         {
             "name": "zircote/swagger-php",
-            "version": "6.20.2",
+            "version": "6.20.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zircote/swagger-php.git",
-                "reference": "fb6f36bc3287e2843d8dc4dff5621b84924d5d8f"
+                "reference": "a1e9d2a9ee09277e4a1a31c26867cde00b896faf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/fb6f36bc3287e2843d8dc4dff5621b84924d5d8f",
-                "reference": "fb6f36bc3287e2843d8dc4dff5621b84924d5d8f",
+                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/a1e9d2a9ee09277e4a1a31c26867cde00b896faf",
+                "reference": "a1e9d2a9ee09277e4a1a31c26867cde00b896faf",
                 "shasum": ""
             },
             "require": {
@@ -9251,7 +9251,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zircote/swagger-php/issues",
-                "source": "https://github.com/zircote/swagger-php/tree/6.20.2"
+                "source": "https://github.com/zircote/swagger-php/tree/6.20.3"
             },
             "funding": [
                 {
@@ -9259,8 +9259,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-03T19:52:48+00:00",
-            "published-time": "2026-11-03T19:53:17+00:00"
+            "time": "2026-11-08T19:40:34+00:00",
+            "published-time": "2026-11-08T19:42:55+00:00"
         }
     ],
     "aliases": [],
