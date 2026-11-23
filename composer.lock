@@ -1138,16 +1138,16 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v7.2.1",
+            "version": "v7.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/php-jwt.git",
-                "reference": "0501f5729b9e2448516674aff07c7d1727869b8e"
+                "reference": "99efeb17d6def8c0295777f2d45b07ff4fdb4e40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/php-jwt/zipball/0501f5729b9e2448516674aff07c7d1727869b8e",
-                "reference": "0501f5729b9e2448516674aff07c7d1727869b8e",
+                "url": "https://api.github.com/repos/googleapis/php-jwt/zipball/99efeb17d6def8c0295777f2d45b07ff4fdb4e40",
+                "reference": "99efeb17d6def8c0295777f2d45b07ff4fdb4e40",
                 "shasum": ""
             },
             "require": {
@@ -1206,10 +1206,10 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/php-jwt/issues",
-                "source": "https://github.com/googleapis/php-jwt/tree/v7.2.1"
+                "source": "https://github.com/googleapis/php-jwt/tree/v7.2.2"
             },
-            "time": "2026-09-28T17:51:46+00:00",
-            "published-time": "2026-09-28T18:08:24+00:00"
+            "time": "2026-11-17T00:25:19+00:00",
+            "published-time": "2026-11-17T19:16:00+00:00"
         },
         {
             "name": "google/auth",
@@ -1332,16 +1332,16 @@
         },
         {
             "name": "google/cloud-secret-manager",
-            "version": "v2.6.0",
+            "version": "v2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-cloud-php-secret-manager.git",
-                "reference": "cc74d8b3479e6de7dea995dca77061e6d69c3f2c"
+                "reference": "32f792fb561fe5d0a5d9a96834befa7036f539cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-cloud-php-secret-manager/zipball/cc74d8b3479e6de7dea995dca77061e6d69c3f2c",
-                "reference": "cc74d8b3479e6de7dea995dca77061e6d69c3f2c",
+                "url": "https://api.github.com/repos/googleapis/google-cloud-php-secret-manager/zipball/32f792fb561fe5d0a5d9a96834befa7036f539cc",
+                "reference": "32f792fb561fe5d0a5d9a96834befa7036f539cc",
                 "shasum": ""
             },
             "require": {
@@ -1377,10 +1377,10 @@
             ],
             "description": "Secret Manager Client for PHP",
             "support": {
-                "source": "https://github.com/googleapis/google-cloud-php-secret-manager/tree/v2.6.0"
+                "source": "https://github.com/googleapis/google-cloud-php-secret-manager/tree/v2.7.0"
             },
-            "time": "2026-10-28T01:51:30+00:00",
-            "published-time": "2026-10-28T02:14:12+00:00"
+            "time": "2026-11-17T00:25:19+00:00",
+            "published-time": "2026-11-17T19:16:47+00:00"
         },
         {
             "name": "google/common-protos",
@@ -1444,16 +1444,16 @@
         },
         {
             "name": "google/gax",
-            "version": "v1.51.2",
+            "version": "v1.52.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/gax-php.git",
-                "reference": "1c06ae8e829e4e56bf22d4ce32768bf2523ddf7d"
+                "reference": "3d794528520c360cda2a8de74a1dbfbd3ae63e1e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/gax-php/zipball/1c06ae8e829e4e56bf22d4ce32768bf2523ddf7d",
-                "reference": "1c06ae8e829e4e56bf22d4ce32768bf2523ddf7d",
+                "url": "https://api.github.com/repos/googleapis/gax-php/zipball/3d794528520c360cda2a8de74a1dbfbd3ae63e1e",
+                "reference": "3d794528520c360cda2a8de74a1dbfbd3ae63e1e",
                 "shasum": ""
             },
             "require": {
@@ -1501,10 +1501,10 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/gax-php/issues",
-                "source": "https://github.com/googleapis/gax-php/tree/v1.51.2"
+                "source": "https://github.com/googleapis/gax-php/tree/v1.52.0"
             },
-            "time": "2026-10-28T23:00:54+00:00",
-            "published-time": "2026-10-29T13:53:21+00:00"
+            "time": "2026-11-17T00:25:19+00:00",
+            "published-time": "2026-11-17T19:15:57+00:00"
         },
         {
             "name": "google/grpc-gcp",
@@ -1554,16 +1554,16 @@
         },
         {
             "name": "google/longrunning",
-            "version": "0.9.0",
+            "version": "0.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/php-longrunning.git",
-                "reference": "ccecf40953cefbddb569fd67b27bd0cf8a1381da"
+                "reference": "cd86d2c4bf939a74fc81cdf34a986159dcc832f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/php-longrunning/zipball/ccecf40953cefbddb569fd67b27bd0cf8a1381da",
-                "reference": "ccecf40953cefbddb569fd67b27bd0cf8a1381da",
+                "url": "https://api.github.com/repos/googleapis/php-longrunning/zipball/cd86d2c4bf939a74fc81cdf34a986159dcc832f7",
+                "reference": "cd86d2c4bf939a74fc81cdf34a986159dcc832f7",
                 "shasum": ""
             },
             "require-dev": {
@@ -1592,10 +1592,10 @@
             ],
             "description": "Google LongRunning Client for PHP",
             "support": {
-                "source": "https://github.com/googleapis/php-longrunning/tree/v0.9.0"
+                "source": "https://github.com/googleapis/php-longrunning/tree/v0.9.1"
             },
-            "time": "2026-10-28T01:51:30+00:00",
-            "published-time": "2026-10-28T02:09:10+00:00"
+            "time": "2026-11-17T00:25:19+00:00",
+            "published-time": "2026-11-17T19:16:12+00:00"
         },
         {
             "name": "google/protobuf",
@@ -1644,16 +1644,16 @@
         },
         {
             "name": "grpc/grpc",
-            "version": "1.85.0",
+            "version": "1.85.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/grpc/grpc-php.git",
-                "reference": "08bd482ca6f99d45fa85ad0bd70876e7455e39cf"
+                "reference": "2edfb26547948bb5f5b63147d46db7c20406b84d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/grpc/grpc-php/zipball/08bd482ca6f99d45fa85ad0bd70876e7455e39cf",
-                "reference": "08bd482ca6f99d45fa85ad0bd70876e7455e39cf",
+                "url": "https://api.github.com/repos/grpc/grpc-php/zipball/2edfb26547948bb5f5b63147d46db7c20406b84d",
+                "reference": "2edfb26547948bb5f5b63147d46db7c20406b84d",
                 "shasum": ""
             },
             "require": {
@@ -1682,29 +1682,29 @@
                 "rpc"
             ],
             "support": {
-                "source": "https://github.com/grpc/grpc-php/tree/v1.85.0"
+                "source": "https://github.com/grpc/grpc-php/tree/v1.85.4"
             },
-            "time": "2026-10-28T05:30:17+00:00",
-            "published-time": "2026-10-28T05:31:43+00:00"
+            "time": "2026-11-21T04:43:56+00:00",
+            "published-time": "2026-11-21T04:44:01+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.16.1",
+            "version": "7.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "81755d989b3007ca7f88a069857553cd08e7dc2e"
+                "reference": "f61ba5ea0a55032a55ddbb72cab7d307c1043654"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/81755d989b3007ca7f88a069857553cd08e7dc2e",
-                "reference": "81755d989b3007ca7f88a069857553cd08e7dc2e",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f61ba5ea0a55032a55ddbb72cab7d307c1043654",
+                "reference": "f61ba5ea0a55032a55ddbb72cab7d307c1043654",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "guzzlehttp/promises": "^2.6",
-                "guzzlehttp/psr7": "^2.13.2",
+                "guzzlehttp/promises": "^2.6.2",
+                "guzzlehttp/psr7": "^2.13.6",
                 "php": "^7.2.5 || ^8.0",
                 "psr/http-client": "^1.0",
                 "symfony/deprecation-contracts": "^2.5 || ^3.0",
@@ -1797,7 +1797,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/7.16.1"
+                "source": "https://github.com/guzzle/guzzle/tree/7.17.0"
             },
             "funding": [
                 {
@@ -1813,21 +1813,21 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-25T21:35:21+00:00",
-            "published-time": "2026-10-25T21:37:23+00:00"
+            "time": "2026-11-22T16:49:11+00:00",
+            "published-time": "2026-11-22T16:50:19+00:00"
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "2.6.0",
+            "version": "2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "3d88c829bd5f13d13847b39067dbf09a60af2154"
+                "reference": "72e93ed2b1f3d8c09d1460c950bd5726face7ccd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/3d88c829bd5f13d13847b39067dbf09a60af2154",
-                "reference": "3d88c829bd5f13d13847b39067dbf09a60af2154",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/72e93ed2b1f3d8c09d1460c950bd5726face7ccd",
+                "reference": "72e93ed2b1f3d8c09d1460c950bd5726face7ccd",
                 "shasum": ""
             },
             "require": {
@@ -1882,7 +1882,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/2.6.0"
+                "source": "https://github.com/guzzle/promises/tree/2.6.2"
             },
             "funding": [
                 {
@@ -1898,21 +1898,21 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-18T12:46:59+00:00",
-            "published-time": "2026-10-18T12:47:39+00:00"
+            "time": "2026-11-21T03:45:23+00:00",
+            "published-time": "2026-11-21T03:46:19+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.13.3",
+            "version": "2.13.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "6d3cd8285a97eaa352956a4ada92fa03ecce1c4e"
+                "reference": "2bd3dccf56e99cdacf74b1ad5e06a08a5a7739f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/6d3cd8285a97eaa352956a4ada92fa03ecce1c4e",
-                "reference": "6d3cd8285a97eaa352956a4ada92fa03ecce1c4e",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/2bd3dccf56e99cdacf74b1ad5e06a08a5a7739f2",
+                "reference": "2bd3dccf56e99cdacf74b1ad5e06a08a5a7739f2",
                 "shasum": ""
             },
             "require": {
@@ -2002,7 +2002,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.13.3"
+                "source": "https://github.com/guzzle/psr7/tree/2.13.6"
             },
             "funding": [
                 {
@@ -2018,8 +2018,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-12T15:57:42+00:00",
-            "published-time": "2026-11-12T15:58:42+00:00"
+            "time": "2026-11-21T23:48:40+00:00",
+            "published-time": "2026-11-21T23:49:39+00:00"
         },
         {
             "name": "psr/cache",
@@ -4489,42 +4489,42 @@
         },
         {
             "name": "ergebnis/agent-detector",
-            "version": "2.0.0",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ergebnis/agent-detector.git",
-                "reference": "bcc63004284c61c6df6e9625acf2673e3be1889b"
+                "reference": "ae2169d42024c6009abd0bb0aec5cf46c902fb1d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ergebnis/agent-detector/zipball/bcc63004284c61c6df6e9625acf2673e3be1889b",
-                "reference": "bcc63004284c61c6df6e9625acf2673e3be1889b",
+                "url": "https://api.github.com/repos/ergebnis/agent-detector/zipball/ae2169d42024c6009abd0bb0aec5cf46c902fb1d",
+                "reference": "ae2169d42024c6009abd0bb0aec5cf46c902fb1d",
                 "shasum": ""
             },
             "require": {
                 "php": "~7.4.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0 || ~8.6.0"
             },
             "require-dev": {
-                "ergebnis/composer-normalize": "^2.54.0",
-                "ergebnis/license": "^2.8.0",
+                "ergebnis/composer-normalize": "^2.56.1",
+                "ergebnis/license": "^2.9.0",
                 "ergebnis/php-cs-fixer-config": "^6.60.2",
-                "ergebnis/phpstan-rules": "^2.14.2",
+                "ergebnis/phpstan-rules": "^2.17.1",
                 "ergebnis/phpunit-slow-test-detector": "^2.27.0",
-                "ergebnis/rector-rules": "^1.18.5",
+                "ergebnis/rector-rules": "^1.19.0",
                 "fakerphp/faker": "^1.24.1",
                 "infection/infection": "^0.26.6",
                 "phpstan/extension-installer": "^1.4.3",
                 "phpstan/phpstan": "^2.2.14",
                 "phpstan/phpstan-deprecation-rules": "^2.0.5",
-                "phpstan/phpstan-phpunit": "^2.1.1",
-                "phpstan/phpstan-strict-rules": "^2.1.0",
+                "phpstan/phpstan-phpunit": "^2.1.2",
+                "phpstan/phpstan-strict-rules": "^2.1.1",
                 "phpunit/phpunit": "^9.6.34",
                 "rector/rector": "^2.7.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "2.0-dev"
+                    "dev-main": "2.1-dev"
                 },
                 "composer-normalize": {
                     "indent-size": 2,
@@ -4554,8 +4554,8 @@
                 "security": "https://github.com/ergebnis/agent-detector/blob/main/.github/SECURITY.md",
                 "source": "https://github.com/ergebnis/agent-detector"
             },
-            "time": "2026-10-29T17:44:55+00:00",
-            "published-time": "2026-10-29T17:49:41+00:00"
+            "time": "2026-11-19T13:07:04+00:00",
+            "published-time": "2026-11-19T13:08:21+00:00"
         },
         {
             "name": "evenement/evenement",
@@ -4670,16 +4670,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.95.30",
+            "version": "v3.95.32",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "e85cafc4d861c122839d5409eda3325ac0ec0300"
+                "reference": "c12acc751f4039935429057f1fadf0e5f62601c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/e85cafc4d861c122839d5409eda3325ac0ec0300",
-                "reference": "e85cafc4d861c122839d5409eda3325ac0ec0300",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/c12acc751f4039935429057f1fadf0e5f62601c1",
+                "reference": "c12acc751f4039935429057f1fadf0e5f62601c1",
                 "shasum": ""
             },
             "require": {
@@ -4762,7 +4762,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.95.30"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.95.32"
             },
             "funding": [
                 {
@@ -4770,8 +4770,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-09T14:32:19+00:00",
-            "published-time": "2026-11-09T14:32:30+00:00"
+            "time": "2026-11-17T18:09:13+00:00",
+            "published-time": "2026-11-17T18:09:33+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -6161,22 +6161,22 @@
         },
         {
             "name": "radebatz/type-info-extras",
-            "version": "1.0.14",
+            "version": "1.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DerManoMann/type-info-extras.git",
-                "reference": "08ac334a97e92c890eec6f644a6555fdf225fa8d"
+                "reference": "f2415d2abbf014d1f511c37a87243c80e3da0547"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DerManoMann/type-info-extras/zipball/08ac334a97e92c890eec6f644a6555fdf225fa8d",
-                "reference": "08ac334a97e92c890eec6f644a6555fdf225fa8d",
+                "url": "https://api.github.com/repos/DerManoMann/type-info-extras/zipball/f2415d2abbf014d1f511c37a87243c80e3da0547",
+                "reference": "f2415d2abbf014d1f511c37a87243c80e3da0547",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.2",
                 "phpstan/phpdoc-parser": "^2.0",
-                "symfony/type-info": "^7.3.8 || ^7.4.1 || ^8.0 || ^8.1-@dev"
+                "symfony/type-info": "^7.3.8 || ^7.4.1 || >=8.0 <8.3@dev"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.70",
@@ -6218,10 +6218,10 @@
             ],
             "support": {
                 "issues": "https://github.com/DerManoMann/type-info-extras/issues",
-                "source": "https://github.com/DerManoMann/type-info-extras/tree/1.0.14"
+                "source": "https://github.com/DerManoMann/type-info-extras/tree/1.0.16"
             },
-            "time": "2026-11-12T03:41:43+00:00",
-            "published-time": "2026-11-12T03:43:08+00:00"
+            "time": "2026-11-19T23:35:25+00:00",
+            "published-time": "2026-11-19T23:44:22+00:00"
         },
         {
             "name": "react/cache",
