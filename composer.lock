@@ -2771,16 +2771,16 @@
         },
         {
             "name": "symfony/clock",
-            "version": "v8.1.9",
+            "version": "v8.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/clock.git",
-                "reference": "945ea3b64d6da9c1c2c354fe5c07b27455df6442"
+                "reference": "7e6b34563da2870b8041066a12f21e2f69101458"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/clock/zipball/945ea3b64d6da9c1c2c354fe5c07b27455df6442",
-                "reference": "945ea3b64d6da9c1c2c354fe5c07b27455df6442",
+                "url": "https://api.github.com/repos/symfony/clock/zipball/7e6b34563da2870b8041066a12f21e2f69101458",
+                "reference": "7e6b34563da2870b8041066a12f21e2f69101458",
                 "shasum": ""
             },
             "require": {
@@ -2824,7 +2824,7 @@
                 "time"
             ],
             "support": {
-                "source": "https://github.com/symfony/clock/tree/v8.1.9"
+                "source": "https://github.com/symfony/clock/tree/v8.2.0"
             },
             "funding": [
                 {
@@ -2844,8 +2844,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-12T14:32:04+00:00",
-            "published-time": "2026-10-14T06:48:32+00:00"
+            "time": "2026-10-12T14:32:11+00:00",
+            "published-time": "2026-11-28T12:13:22+00:00"
         },
         {
             "name": "symfony/console",
